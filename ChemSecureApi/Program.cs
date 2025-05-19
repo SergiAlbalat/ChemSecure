@@ -1,5 +1,6 @@
 using ChemSecureApi.Data;
 using ChemSecureApi.Model;
+using ChemSecureApi.Tools;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -63,6 +64,12 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await RoleTools.CrearRolsInicials(services);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
