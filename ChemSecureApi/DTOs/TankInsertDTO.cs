@@ -1,13 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ChemSecureApi.Model;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ChemSecureApi.Model
+namespace ChemSecureApi.DTOs
 {
-    public enum residusType {HalogenatedSolvents, NonHalogenatedSolvents, AqueousSolutions, Acids, Oils};
-    public class Tank
+    public class TankInsertDTO
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public double Capacity { get; set; }
         public double CurrentVolume { get; set; }
