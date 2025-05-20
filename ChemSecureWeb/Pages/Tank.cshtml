@@ -1,0 +1,47 @@
+﻿@page
+@model ChemSecureWeb.Pages.TankModel
+@{
+    ViewData["Title"] = "Tank view";
+}
+
+<div class="text-center">
+    @{
+        switch(Model.Percentage){
+            case >99:
+                <img src="#" alt="100%" />
+                break;
+            case >89:
+                <img src="#" alt="90%" />
+                break;
+            case >79:
+                <img src="#" alt="80%" />
+                break;
+            case >69:
+                <img src="#" alt="70%" />
+                break;
+            case >59:
+                <img src="#" alt="60%" />
+                break;
+            case >49:
+                <img src="#" alt="50%" />
+                break;
+            case >39:
+                <img src="#" alt="40%" />
+                break;
+            case >29:
+                <img src="#" alt="30%" />
+                break;
+            case >19:
+                <img src="#" alt="20%" />
+                break;
+            case > 9:
+                <img src="#" alt="10%" />
+                break;
+            default:
+                <img src="#" alt="0%"/>
+                <p>Tank empty</p>
+                break;
+        }
+    }
+
+</div>
