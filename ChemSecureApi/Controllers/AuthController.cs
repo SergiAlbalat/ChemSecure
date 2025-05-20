@@ -27,7 +27,7 @@ namespace ChemSecureApi.Controllers
         /// </summary>
         /// <param name="userDTO">The data for the new entry</param>
         /// <returns></returns>
-        [Authorize("Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO userDTO)
         {
@@ -92,6 +92,28 @@ namespace ChemSecureApi.Controllers
                 signingCredentials: creds
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        /// <summary>
+        /// Method for registering a new admin
+        /// </summary>
+        /// <param name="userDTO">The data for the new entry</param>
+        /// <returns></returns>
+        [HttpPost("admin/register")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterDTO userDTO)
+        {
+            var user = new User { UserName = userDTO.Name, Email = userDTO.Email, PhoneNumber = userDTO.Phone, Address = userDTO.Address };
+            var result = await _userManager.CreateAsync(user, userDTO.Password);
+            var roleResult = new IdentityResult();
+            if (result.Succeeded)
+            {
+                roleResult = await _userManager.AddToRoleAsync(user, "Admin");
+            }
+            if (result.Succeeded && roleResult.Succeeded)
+            {
+                return Ok("Admin registered");
+            }
+            return BadRequest(result.Errors);
         }
     }
 }
