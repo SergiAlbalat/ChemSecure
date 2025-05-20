@@ -19,6 +19,7 @@ namespace ChemSecureApi.Controllers
             _context = context;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("")]
         public async Task<ActionResult<IEnumerable<Tank>>> GetTanks()
         {
@@ -35,6 +36,7 @@ namespace ChemSecureApi.Controllers
             return Ok(tanksDTO);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Tank>> GetTank(int id)
         {
