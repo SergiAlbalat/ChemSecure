@@ -1,8 +1,10 @@
-﻿using ChemSecureApi.DTOs;
+﻿using ChemSecureApi.Data;
+using ChemSecureApi.DTOs;
 using ChemSecureApi.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -16,10 +18,12 @@ namespace ChemSecureApi.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
-        public AuthController(UserManager<User> userManager, IConfiguration configuration)
+        private readonly AppDbContext _context;
+        public AuthController(UserManager<User> userManager, IConfiguration configuration, AppDbContext context)
         {
             _userManager = userManager;
             _configuration = configuration;
+            _context = context;
         }
 
         /// <summary>
@@ -38,6 +42,26 @@ namespace ChemSecureApi.Controllers
                 return Ok("User registered");
             }
             return BadRequest(result.Errors);
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<User>> GetUser(string id)
+        {
+            var user = await _context.Users
+                .Include(g => g.Tanks)
+                .FirstOrDefaultAsync(g => g.Id == id);
+
+            if (user == null)
+            {
+                return NotFound("No s'ha trobat aquest joc.");
+            }
+            var userDto = new UserDTO
+            {
+                Capacity = tank.Capacity,
+                CurrentVolume = tank.CurrentVolume,
+                Type = tank.Type,
+            };
+            return Ok(userDto);
         }
 
         /// <summary>
