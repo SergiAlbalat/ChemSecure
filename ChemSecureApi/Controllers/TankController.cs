@@ -4,6 +4,7 @@ using ChemSecureApi.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ChemSecureApi.Controllers
@@ -126,6 +127,32 @@ namespace ChemSecureApi.Controllers
         private bool TankExists(int id)
         {
             return _context.Tanks.Any(e => e.Id == id);
+        }
+
+        [Authorize]
+        [HttpGet("user")]
+        public async Task<ActionResult<IEnumerable<Tank>>> GetUserTanks()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized("User not found.");
+            }
+            var tanks = await _context.Tanks
+                .Include(g => g.Client)
+                .Where(g => g.Client.Id == userId)
+                .ToListAsync();
+            if (tanks == null || tanks.Count == 0)
+            {
+                return NotFound("No tanks found for this user.");
+            }
+            var tanksDTO = tanks.Select(tank => new TankGetDTO
+            {
+                Capacity = tank.Capacity,
+                CurrentVolume = tank.CurrentVolume,
+                Type = tank.Type,
+            }).ToList();
+            return Ok(tanksDTO);
         }
     }
 }
