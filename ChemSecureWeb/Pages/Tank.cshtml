@@ -1,47 +1,51 @@
 ﻿@page
 @model ChemSecureWeb.Pages.TankModel
-@{
-    ViewData["Title"] = "Tank view";
-}
-
-<div class="text-center">
-    @{
-        switch(Model.Percentage){
-            case >99:
-                <img src="~/img/FullTank.jpg" alt="100%" />
-                break;
-            case >89:
-                <img src="~/img/Tank-90.jpg" alt="90%" />
-                break;
-            case >79:
-                <img src="~/img/Tank-80.jpg" alt="80%" />
-                break;
-            case >69:
-                <img src="~/img/Tank-70.jpg" alt="70%" />
-                break;
-            case >59:
-                <img src="~/img/Tank-60.jpg" alt="60%" />
-                break;
-            case >49:
-                <img src="~/img/Tank-50.jpg" alt="50%" />
-                break;
-            case >39:
-                <img src="~/img/Tank-40.jpg" alt="40%" />
-                break;
-            case >29:
-                <img src="~/img/Tank-30.jpg" alt="30%" />
-                break;
-            case >19:
-                <img src="~/img/Tank-20.jpg" alt="20%" />
-                break;
-            case > 9:
-                <img src="~/img/Tank-10.jpg" alt="10%" />
-                break;
-            default:
-                <img src="~/img/EmptyTank.png" alt="0%" />
-                <p>Tank empty</p>
-                break;
-        }
-    }
-
+@{ViewData["Title"] = "Tank view";}
+<div style="display: flex; flex-wrap: wrap; gap: 1px;">
+		@{
+			foreach (var tank in Model.tanks)
+			{
+					
+				<div style="flex: 0 1 calc(33.33% - 10px);">
+				@{switch (tank.Percentage){
+					case > 99:
+							<img src="./img/FullTank.jpg" alt="100%" style="width:475px; height:auto; display:block; margin-bottom:10px;" loading="lazy" />
+						break;
+					case > 89:
+							<img src="./img/Tank-90.jpg" alt="90%" style="width:475px; height:auto; display:block; margin-bottom:10px;" loading="lazy"/>
+						break;
+					case > 79:
+							<img src="./img/Tank-80.jpg" alt="80%" style="width:475px; height:auto; display:block; margin-bottom:10px;" loading="lazy" />
+						break;
+					case > 69:
+							<img src="./img/Tank-70.jpg" alt="70%" style="width:475px; height:auto; display:block; margin-bottom:10px;" loading="lazy" />
+						break;
+					case > 59:
+							<img src="./img/Tank-60.jpg" alt="60%" style="width:475px; height:auto; display:block; margin-bottom:10px;" loading="lazy" />
+						break;
+					case > 49:
+							<img src="./img/Tank-50.jpg" alt="50%" style="width:475px; height:auto; display:block; margin-bottom:10px;" loading="lazy" />
+						break;
+					case > 39:
+							<img src="./img/Tank-40.jpg" alt="40%" style="width:475px; height:auto; display:block; margin-bottom:10px;" loading="lazy" />
+						break;
+					case > 29:
+							<img src="./img/Tank-30.jpg" alt="30%" style="width:475px; height:auto; display:block; margin-bottom:10px;" loading="lazy" />
+						break;
+					case > 19:
+							<img src="./img/Tank-20.jpg" alt="20%" style="width:475px; height:auto; display:block; margin-bottom:10px;" loading="lazy" />
+						break;
+					case > 9:
+							<img src="./img/Tank-10.jpg" alt="10%" style="width:475px; height:auto; display:block; margin-bottom:10px;" loading="lazy" />
+						break;
+					default:
+							<img src="./img/EmptyTank.png" alt="0%" style="width:475px; height:auto; display:block; margin-bottom:10px;" loading="lazy" />
+						break;
+				}
+				}
+				
+				</div>
+			}
+		}
+	
 </div>
