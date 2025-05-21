@@ -4,6 +4,7 @@ using ChemSecureApi.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ChemSecureApi.Controllers
@@ -18,6 +19,7 @@ namespace ChemSecureApi.Controllers
             _context = context;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("")]
         public async Task<ActionResult<IEnumerable<Tank>>> GetTanks()
         {
@@ -34,6 +36,7 @@ namespace ChemSecureApi.Controllers
             return Ok(tanksDTO);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Tank>> GetTank(int id)
         {
@@ -56,7 +59,7 @@ namespace ChemSecureApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<Tank>> PostGame(TankInsertDTO tankDto)
+        public async Task<ActionResult<Tank>> PostTank(TankInsertDTO tankDto)
         {
             var tank = new Tank
             {
@@ -82,22 +85,22 @@ namespace ChemSecureApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> DeleteGame(int id)
+        public async Task<IActionResult> DeleteTank(int id)
         {
-            var game = await _context.Tanks.FindAsync(id);
+            var tank = await _context.Tanks.FindAsync(id);
 
-            if (game == null)
+            if (tank == null)
             {
                 return NotFound("Tank wasn't not found.");
             }
-            _context.Tanks.Remove(game);
+            _context.Tanks.Remove(tank);
             await _context.SaveChangesAsync();
             return NoContent();
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPut("put/{id}")]
-        public async Task<IActionResult> PutGame(Tank tank, int id)
+        public async Task<IActionResult> PutTank(Tank tank, int id)
         {
             if (tank.Id != id)
             {
@@ -126,6 +129,32 @@ namespace ChemSecureApi.Controllers
         private bool TankExists(int id)
         {
             return _context.Tanks.Any(e => e.Id == id);
+        }
+
+        [Authorize]
+        [HttpGet("user")]
+        public async Task<ActionResult<IEnumerable<Tank>>> GetUserTanks()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized("User not found.");
+            }
+            var tanks = await _context.Tanks
+                .Include(g => g.Client)
+                .Where(g => g.Client.Id == userId)
+                .ToListAsync();
+            if (tanks == null || tanks.Count == 0)
+            {
+                return NotFound("No tanks found for this user.");
+            }
+            var tanksDTO = tanks.Select(tank => new TankGetDTO
+            {
+                Capacity = tank.Capacity,
+                CurrentVolume = tank.CurrentVolume,
+                Type = tank.Type,
+            }).ToList();
+            return Ok(tanksDTO);
         }
     }
 }
