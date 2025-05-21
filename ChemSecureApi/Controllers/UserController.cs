@@ -21,7 +21,7 @@ namespace ChemSecureApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(string id)
+        public async Task<ActionResult<UserDTO>> GetUser(string id)
         {
             var user = await _context.Users
                 .Include(g => g.Tanks)
@@ -43,7 +43,7 @@ namespace ChemSecureApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet("")]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
         {
             var users = await _context.Users
                 .Include(g => g.Tanks)
@@ -56,6 +56,21 @@ namespace ChemSecureApi.Controllers
                 Address = user.Address
             }).ToList();
             return Ok(usersDTO);
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpGet("{id}/tank")]
+        public async Task<ActionResult<User>> GetUserTank(string id)
+        {
+            var user = await _context.Users
+                .Include(g => g.Tanks)
+                .FirstOrDefaultAsync(g => g.Id == id);
+
+            if (user == null)
+            {
+                return NotFound("User was not found.");
+            }
+           
+            return Ok(user);
         }
     }
 }
