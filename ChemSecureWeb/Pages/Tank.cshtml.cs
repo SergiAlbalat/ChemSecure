@@ -9,7 +9,7 @@ namespace ChemSecureWeb.Pages
         public int Percentage { get; set; }
         public void OnGet()
         {
-            Percentage = 77;
+            Percentage = 32;
         }
     }
 }
