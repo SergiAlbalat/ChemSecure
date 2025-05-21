@@ -40,5 +40,22 @@ namespace ChemSecureApi.Controllers
             };
             return Ok(userDto);
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("")]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        {
+            var users = await _context.Users
+                .Include(g => g.Tanks)
+                .ToListAsync();
+            var usersDTO = users.Select(user => new UserDTO
+            {
+                UserName = user.UserName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address
+            }).ToList();
+            return Ok(usersDTO);
+        }
     }
 }
