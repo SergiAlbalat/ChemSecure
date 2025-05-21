@@ -43,26 +43,6 @@ namespace ChemSecureApi.Controllers
             }
             return BadRequest(result.Errors);
         }
-        [Authorize(Roles = "Admin")]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(string id)
-        {
-            var user = await _context.Users
-                .Include(g => g.Tanks)
-                .FirstOrDefaultAsync(g => g.Id == id);
-
-            if (user == null)
-            {
-                return NotFound("No s'ha trobat aquest joc.");
-            }
-            var userDto = new UserDTO
-            {
-                Capacity = tank.Capacity,
-                CurrentVolume = tank.CurrentVolume,
-                Type = tank.Type,
-            };
-            return Ok(userDto);
-        }
 
         /// <summary>
         /// Method for logging in a user
