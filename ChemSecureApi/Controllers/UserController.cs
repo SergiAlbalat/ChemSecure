@@ -18,6 +18,7 @@ namespace ChemSecureApi.Controllers
         {
             _context = context;
         }
+
         [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(string id)
