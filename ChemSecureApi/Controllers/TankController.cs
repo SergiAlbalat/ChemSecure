@@ -2,6 +2,7 @@
 using ChemSecureApi.DTOs;
 using ChemSecureApi.Model;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -14,9 +15,11 @@ namespace ChemSecureApi.Controllers
     public class TankController : Controller
     {
         private readonly AppDbContext _context;
-        public TankController(AppDbContext context)
+        private readonly UserManager<User> _userManager;
+        public TankController(AppDbContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [Authorize(Roles = "Admin")]
@@ -68,7 +71,7 @@ namespace ChemSecureApi.Controllers
                 Capacity = tankDto.Capacity,
                 CurrentVolume = tankDto.CurrentVolume,
                 Type = tankDto.Type,
-                Client = tankDto.Client
+                Client = _userManager.FindByIdAsync(tankDto.Client.Id).Result
             };
             try
             {

@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ChemSecureApi.DTOs
 {
-    public class UserDTO : IdentityUser
+    public class UserDTO : User
     {
-        public string Address { get; set; }
-        public List<Tank> Tanks { get; set; }
+        
     }
 }
