@@ -21,7 +21,7 @@ namespace ChemSecureApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(string id)
+        public async Task<ActionResult<UserDTO>> GetUser(string id)
         {
             var user = await _context.Users
                 .Include(g => g.Tanks)
@@ -43,7 +43,7 @@ namespace ChemSecureApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet("")]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
         {
             var users = await _context.Users
                 .Include(g => g.Tanks)
