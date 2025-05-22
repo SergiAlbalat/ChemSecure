@@ -138,6 +138,29 @@ namespace ChemSecureApi.Controllers
             return NoContent();
         }
 
+        [HttpPatch("update-volume/{id}")]
+        public async Task<IActionResult> UpdateTankVolume(int id, [FromBody] double newVolume)
+        {
+            var tank = await _context.Tanks.FindAsync(id);
+            if (tank == null)
+            {
+                return NotFound("Tank does not exist.");
+            }
+
+            // Actualizar solo la propiedad CurrentVolume
+            tank.CurrentVolume = newVolume;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return StatusCode(500, "Error consulting volum");
+            }
+
+            return NoContent();
+        }
         private bool TankExists(int id)
         {
             return _context.Tanks.Any(e => e.Id == id);
