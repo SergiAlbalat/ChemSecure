@@ -28,6 +28,7 @@ namespace ChemSecureApi.Controllers
                                   .ToListAsync();
             var tanksDTO = tanks.Select(tank => new TankGetDTO
             {
+                Id = tank.Id,
                 Capacity = tank.Capacity,
                 CurrentVolume = tank.CurrentVolume,
                 Type = tank.Type,
@@ -50,6 +51,7 @@ namespace ChemSecureApi.Controllers
             }
             var tankDto = new TankGetDTO
             {
+                Id = tank.Id,
                 Capacity = tank.Capacity,
                 CurrentVolume = tank.CurrentVolume,
                 Type = tank.Type,
@@ -68,7 +70,7 @@ namespace ChemSecureApi.Controllers
                 Capacity = tankDto.Capacity,
                 CurrentVolume = tankDto.CurrentVolume,
                 Type = tankDto.Type,
-                Client = tankDto.Client
+                ClientId = tankDto.ClientId,
             };
             try
             {
@@ -100,7 +102,7 @@ namespace ChemSecureApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut("put/{id}")]
-        public async Task<IActionResult> PutTank(Tank tank, int id)
+        public async Task<IActionResult> PutTank(TankInsertDTO tank, int id)
         {
             if (tank.Id != id)
             {
@@ -150,6 +152,7 @@ namespace ChemSecureApi.Controllers
             }
             var tanksDTO = tanks.Select(tank => new TankGetDTO
             {
+                Id = tank.Id,
                 Capacity = tank.Capacity,
                 CurrentVolume = tank.CurrentVolume,
                 Type = tank.Type,
