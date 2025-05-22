@@ -14,7 +14,7 @@ jobs:
     runs-on: windows-latest
     # Definimos una variable para guardar los artefactos del build.
     env:
-      ARTIFACT_DIR: ${{ runner.temp }}/myapp
+      ARTIFACT_DIR: ${{ github.workspace }}/myapp
     permissions:
       contents: read
 
