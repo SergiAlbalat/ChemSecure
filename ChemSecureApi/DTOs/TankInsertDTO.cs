@@ -10,6 +10,6 @@ namespace ChemSecureApi.DTOs
         public double Capacity { get; set; }
         public double CurrentVolume { get; set; }
         public residusType Type { get; set; }
-        public User Client { get; set; }
+        public string ClientId { get; set; }
     }
 }
