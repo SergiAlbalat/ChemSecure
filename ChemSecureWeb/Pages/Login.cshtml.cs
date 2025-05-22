@@ -40,7 +40,7 @@ namespace ChemSecureWeb.Pages
             else
             {
                 // Si falla la autenticación, se agrega el error al ModelState para mostrarlo en el formulario
-                ModelState.AddModelError(string.Empty, "Usuario o contraseña incorrectos.");
+                ModelState.AddModelError(string.Empty, "Username or password incorrect.");
                 return Page();
             }
         }
