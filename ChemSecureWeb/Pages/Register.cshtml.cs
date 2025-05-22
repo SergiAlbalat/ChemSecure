@@ -1,64 +1,55 @@
+using ChemSecureWeb.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace ChemSecureWeb.Pages
 {
     public class RegisterModel : PageModel
     {
-        // Propiedad para el nombre
-        [BindProperty]
-        [Required(ErrorMessage = "Name required")]
-        public string Name { get; set; }
-
-        // Propiedad para el email
-        [BindProperty]
-        [Required(ErrorMessage = "Email required")]
-        [EmailAddress(ErrorMessage = "Invalid email")]
-        public string Email { get; set; }
-
-        // Propiedad para la contraseña
-        [BindProperty]
-        [Required(ErrorMessage = "Password required")]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
-
-        // Propiedad para el teléfono
-        [BindProperty]
-        [Required(ErrorMessage = "Phone required")]
-        [Phone(ErrorMessage = "Invalid phone")]
-        public string Phone { get; set; }
-
-        // Propiedad para la dirección
-        [BindProperty]
-        [Required(ErrorMessage = "Address required")]
-        public string Address { get; set; }
-
-        [TempData]
-        public string SuccessMessage { get; set; }
-
-        // Maneja la solicitud GET: carga la página de registro
-        public void OnGet()
+        private readonly IHttpClientFactory _httpClient;
+        private readonly ILogger<RegisterModel> _logger;
+        private readonly IConfiguration _configuration;
+        public RegisterModel(IHttpClientFactory httpClient, ILogger<RegisterModel> logger, IConfiguration configuration)
         {
-            // Puedes inicializar valores o limpiar datos previos aquí
+            _httpClient = httpClient;
+            _logger = logger;
+            _configuration = configuration;
         }
+        [BindProperty]
+        public RegisterDTO RegisterData { get; set; }
 
-        // Maneja la solicitud POST: procesa el registro
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            // Aquí insertarías la lógica para registrar el usuario, por ejemplo:
-            // - Validar que el email no esté registrado
-            // - Encriptar la contraseña
-            // - Guardar el usuario en la base de datos, etc.
+            string apiBaseUrl = _configuration["ApiSettings:BaseUrl"];
 
-            // Simulamos un registro exitoso:
-            SuccessMessage = "Register completed, you can now login";
-            return RedirectToPage("/Login");
+            var httpClient = _httpClient.CreateClient();
+            httpClient.BaseAddress = new Uri(apiBaseUrl);
+
+            var jsonContent = JsonConvert.SerializeObject(RegisterData);
+            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync("api/Auth/register", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToPage("/Login");
+            }
+            if(response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                ModelState.AddModelError(string.Empty, "You are not authorized.");
+            }
+
+            ModelState.AddModelError(string.Empty, "Error while trying to register.");
+            
+            return Page();
         }
     }
 }
