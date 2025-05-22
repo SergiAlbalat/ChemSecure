@@ -100,15 +100,24 @@ namespace ChemSecureApi.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut("put/{id}")]
-        public async Task<IActionResult> PutTank(TankInsertDTO tank, int id)
+        public async Task<IActionResult> PutTank(TankInsertDTO tankDto, int id)
         {
-            if (tank.Id != id)
+            if (tankDto.Id != id)
             {
-                return BadRequest();
+                return BadRequest("The ID does not  match with the ID tanck.");
             }
-            _context.Entry(tank).State = EntityState.Modified;
+
+            var tank = await _context.Tanks.FindAsync(id);
+            if (tank == null)
+            {
+                return NotFound("Tank was not found.");
+            }
+            tank.Capacity = tankDto.Capacity;
+            tank.CurrentVolume = tankDto.CurrentVolume;
+            tank.Type = tankDto.Type;
+            tank.ClientId = tankDto.ClientId;
 
             try
             {
@@ -118,16 +127,40 @@ namespace ChemSecureApi.Controllers
             {
                 if (!TankExists(id))
                 {
-                    return NotFound();
+                    return NotFound("Tank does not exist.");
                 }
                 else
                 {
                     throw;
                 }
             }
+
             return NoContent();
         }
 
+        [HttpPatch("update-volume/{id}")]
+        public async Task<IActionResult> UpdateTankVolume(int id, [FromBody] double newVolume)
+        {
+            var tank = await _context.Tanks.FindAsync(id);
+            if (tank == null)
+            {
+                return NotFound("Tank does not exist.");
+            }
+
+            // Actualizar solo la propiedad CurrentVolume
+            tank.CurrentVolume = newVolume;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return StatusCode(500, "Error consulting volum");
+            }
+
+            return NoContent();
+        }
         private bool TankExists(int id)
         {
             return _context.Tanks.Any(e => e.Id == id);
