@@ -100,15 +100,24 @@ namespace ChemSecureApi.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut("put/{id}")]
-        public async Task<IActionResult> PutTank(TankInsertDTO tank, int id)
+        public async Task<IActionResult> PutTank(TankInsertDTO tankDto, int id)
         {
-            if (tank.Id != id)
+            if (tankDto.Id != id)
             {
-                return BadRequest();
+                return BadRequest("The ID does not  match with the ID tanck.");
             }
-            _context.Entry(tank).State = EntityState.Modified;
+
+            var tank = await _context.Tanks.FindAsync(id);
+            if (tank == null)
+            {
+                return NotFound("Tank was not found.");
+            }
+            tank.Capacity = tankDto.Capacity;
+            tank.CurrentVolume = tankDto.CurrentVolume;
+            tank.Type = tankDto.Type;
+            tank.ClientId = tankDto.ClientId;
 
             try
             {
@@ -118,13 +127,14 @@ namespace ChemSecureApi.Controllers
             {
                 if (!TankExists(id))
                 {
-                    return NotFound();
+                    return NotFound("Tank does not exist.");
                 }
                 else
                 {
                     throw;
                 }
             }
+
             return NoContent();
         }
 
