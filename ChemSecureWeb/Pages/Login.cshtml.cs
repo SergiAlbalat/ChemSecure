@@ -1,48 +1,71 @@
 using ChemSecureWeb.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace ChemSecureWeb.Pages
 {
     public class LoginModel : PageModel
     {
-        [BindProperty]
-        public string Username { get; set; }
+        private readonly IHttpClientFactory _httpClient;
+        private readonly ILogger _logger;
 
         [BindProperty]
-        public string Password { get; set; }
+        public LoginDTO Login { get; set; } = new();
+        public string? ErrorMessage { get; set; }
 
-        // Esta propiedad se utiliza para mostrar mensajes de error al usuario
-        [TempData]
-        public string ErrorMessage { get; set; }
-
-        // Maneja la solicitud GET: cuando se carga la página
-        public void OnGet()
+        public LoginModel(IHttpClientFactory httpClient, ILogger<LoginModel> logging)
         {
-            // Puedes inicializar algo si es necesario
+            _httpClient = httpClient;
+            _logger = logging;
         }
-
-        // Maneja la solicitud POST: cuando se envía el formulario
+        public void OnGet() { }
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
-            {
                 return Page();
+
+            try
+            {
+                var client = _httpClient.CreateClient("ChemSecureApi");
+                var response = await client.PostAsJsonAsync("api/Auth/login", Login);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var token = await response.Content.ReadAsStringAsync();
+
+                    if (!string.IsNullOrEmpty(token))
+                    {
+                        //Guardem en sessio (cookies) el Token amb la clau "AuthToken"
+                        HttpContext.Session.SetString("AuthToken", token);
+
+                        var tokenHandler = new JwtSecurityTokenHandler();
+                        var jwtToken = tokenHandler.ReadJwtToken(token); // Decodificar JWT
+                        var usernameClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+
+                        if (!string.IsNullOrEmpty(usernameClaim))
+                        {
+                            HttpContext.Session.SetString("UserName", usernameClaim);
+                        }
+                        _logger.LogInformation("Login succesful");
+                        Response.Cookies.Append("jwtToken", token, new CookieOptions { HttpOnly = false });
+                        return RedirectToPage("/Index");
+                    }
+                }
+                else
+                {
+                    _logger.LogInformation("Login failed");
+                    ErrorMessage = "Incorrect information or unauthorized acces.";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error on login");
+                ErrorMessage = "Unexpected error. Try again.";
             }
 
-            // Lógica simple de autenticación para demostración:
-            // En un escenario real, reemplaza esta comparación con una búsqueda en tu base de datos
-            if (Username == "admin" && Password == "password")
-            {
-                // Autenticación exitosa, redirige al usuario a la página principal o dashboard
-                return RedirectToPage("/Index");
-            }
-            else
-            {
-                // Si falla la autenticación, se agrega el error al ModelState para mostrarlo en el formulario
-                ModelState.AddModelError(string.Empty, "Usuario o contraseña incorrectos.");
-                return Page();
-            }
+            return Page();
         }
     }
 }
