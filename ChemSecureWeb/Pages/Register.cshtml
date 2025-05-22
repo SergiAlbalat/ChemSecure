@@ -1,0 +1,59 @@
+﻿@page
+@model ChemSecureWeb.Pages.RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/register.css" />
+</head>
+<body>
+    <div class="register-container">
+        <form method="post" class="register-form">
+            <h2>Register</h2>
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Name">Name</label>
+                <input asp-for="Name" type="text" placeholder="Insert your name" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email">Email</label>
+                <input asp-for="Email" type="email" placeholder="Insert your email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Password">Password</label>
+                <input asp-for="Password" type="password" placeholder="Insert password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Phone">Phone</label>
+                <input asp-for="Phone" type="tel" placeholder="Insert phone number" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Address">Address</label>
+                <input asp-for="Address" type="text" placeholder="Insert address" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+            <button type="submit">Register</button>
+            <a asp-page="/Login">Already have an account? Login</a>
+        </form>
+    </div>
+
+    <partial name="_ValidationScriptsPartial" />
+</body>
+</html>
