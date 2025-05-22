@@ -2,7 +2,7 @@
 
 namespace ChemSecureWeb.Tools
 {
-    public class TokenHelper
+    public static class TokenHelper
     {
         public static bool IsTokenSession(string token)
         {
