@@ -23,9 +23,18 @@ namespace ChemSecureApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDTO>> GetUser(string id)
         {
-            var user = await _context.Users
-                .Include(g => g.Tanks)
-                .FirstOrDefaultAsync(g => g.Id == id);
+            User user = null;
+            try
+            {
+                 user = await _context.Users
+                    .Include(u => u.Tanks )
+                    .FirstOrDefaultAsync(g => g.Id == id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
 
             if (user == null)
             {
@@ -33,6 +42,7 @@ namespace ChemSecureApi.Controllers
             }
             var userDto = new UserDTO
             {
+                Id = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
@@ -50,27 +60,13 @@ namespace ChemSecureApi.Controllers
                 .ToListAsync();
             var usersDTO = users.Select(user => new UserDTO
             {
+                Id=user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 Address = user.Address
             }).ToList();
             return Ok(usersDTO);
-        }
-        [Authorize(Roles = "Admin")]
-        [HttpGet("{id}/tank")]
-        public async Task<ActionResult<User>> GetUserTank(string id)
-        {
-            var user = await _context.Users
-                .Include(g => g.Tanks)
-                .FirstOrDefaultAsync(g => g.Id == id);
-
-            if (user == null)
-            {
-                return NotFound("User was not found.");
-            }
-           
-            return Ok(user);
         }
     }
 }

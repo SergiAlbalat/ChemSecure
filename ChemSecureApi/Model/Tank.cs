@@ -12,6 +12,8 @@ namespace ChemSecureApi.Model
         public double Capacity { get; set; }
         public double CurrentVolume { get; set; }
         public residusType Type { get; set; }
+        [ForeignKey("Client")]
+        public string ClientId { get; set; }
         public User Client { get; set; }
     }
 }
