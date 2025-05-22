@@ -28,6 +28,7 @@ namespace ChemSecureApi.Controllers
                                   .ToListAsync();
             var tanksDTO = tanks.Select(tank => new TankGetDTO
             {
+                Id = tank.Id,
                 Capacity = tank.Capacity,
                 CurrentVolume = tank.CurrentVolume,
                 Type = tank.Type,
@@ -46,10 +47,11 @@ namespace ChemSecureApi.Controllers
 
             if (tank == null)
             {
-                return NotFound("No s'ha trobat aquest joc.");
+                return NotFound("Tank was not found.");
             }
             var tankDto = new TankGetDTO
             {
+                Id = tank.Id,
                 Capacity = tank.Capacity,
                 CurrentVolume = tank.CurrentVolume,
                 Type = tank.Type,
@@ -68,7 +70,7 @@ namespace ChemSecureApi.Controllers
                 Capacity = tankDto.Capacity,
                 CurrentVolume = tankDto.CurrentVolume,
                 Type = tankDto.Type,
-                Client = tankDto.Client
+                ClientId = tankDto.ClientId,
             };
             try
             {
@@ -91,7 +93,7 @@ namespace ChemSecureApi.Controllers
 
             if (tank == null)
             {
-                return NotFound("Tank wasn't not found.");
+                return NotFound("Tank was not found.");
             }
             _context.Tanks.Remove(tank);
             await _context.SaveChangesAsync();
@@ -100,7 +102,7 @@ namespace ChemSecureApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut("put/{id}")]
-        public async Task<IActionResult> PutTank(Tank tank, int id)
+        public async Task<IActionResult> PutTank(TankInsertDTO tank, int id)
         {
             if (tank.Id != id)
             {
@@ -146,10 +148,11 @@ namespace ChemSecureApi.Controllers
                 .ToListAsync();
             if (tanks == null || tanks.Count == 0)
             {
-                return NotFound("No tanks found for this user.");
+                return NotFound("No tanks were found for this user.");
             }
             var tanksDTO = tanks.Select(tank => new TankGetDTO
             {
+                Id = tank.Id,
                 Capacity = tank.Capacity,
                 CurrentVolume = tank.CurrentVolume,
                 Type = tank.Type,
