@@ -1,0 +1,18 @@
+﻿@page
+@using ChemSecureWeb.Tools
+@model ChemSecureWeb.Pages.TankModel
+@{ViewData["Title"] = "Tank view";}
+<div style="display: flex; flex-wrap: wrap; gap: 1px;">
+	@{
+		foreach (var tank in Model.tanks)
+		{
+			string imageURL = TankTools.TankImage(tank.Percentage);
+
+			<div style="flex: 0 1 calc(33.33% - 10px);">
+				<img src=@imageURL alt="" style="width:475px; height:auto; display:block; margin-bottom:10px;" loading="lazy" />
+				<a asp-page="./TankDetails" asp-route-itemid="@tank.Id" class="btn btn-primary">Details</a>
+			</div>
+		}
+	}
+	
+</div>
