@@ -41,12 +41,13 @@ jobs:
       # Preparar la carpeta final combinando ambos artefactos
       - name: Prepare final deploy package
         run: |
-          mkdir ${{ env.ARTIFACT_DIR }}/deploy
+          # Crear carpeta deploy
+          New-Item -ItemType Directory -Force -Path "$env:ARTIFACT_DIR\deploy"
           # Copiar archivos de la webapp a la raíz del paquete final
-          xcopy /E /I "${{ env.ARTIFACT_DIR }}\webapp" "${{ env.ARTIFACT_DIR }}\deploy\"
+          Copy-Item -Path "$env:ARTIFACT_DIR\webapp\*" -Destination "$env:ARTIFACT_DIR\deploy" -Recurse
           # Crear subcarpeta "api" y copiar los archivos de la API allí
-          mkdir ${{ env.ARTIFACT_DIR }}\deploy\api
-          xcopy /E /I "${{ env.ARTIFACT_DIR }}\api" "${{ env.ARTIFACT_DIR }}\deploy\api\"
+          New-Item -ItemType Directory -Force -Path "$env:ARTIFACT_DIR\deploy\api"
+          Copy-Item -Path "$env:ARTIFACT_DIR\api\*" -Destination "$env:ARTIFACT_DIR\deploy\api" -Recurse
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
