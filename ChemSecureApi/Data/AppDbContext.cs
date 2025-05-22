@@ -18,12 +18,8 @@ namespace ChemSecureApi.Data
             builder.Entity<Tank>()
                 .HasOne(t => t.Client)
                 .WithMany(u => u.Tanks)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<User>()
-                .HasMany(u => u.Tanks)
-                .WithOne(t => t.Client)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(t => t.ClientId)
+                .IsRequired(false);             
         }
     }
 }
