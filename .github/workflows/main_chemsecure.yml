@@ -32,11 +32,11 @@ jobs:
 
       # Publicar la aplicación web
       - name: Publish Web App project
-        run: dotnet publish path/to/WebAppProject/WebAppProject.csproj -c Release -o ${{ env.ARTIFACT_DIR }}/webapp
+        run: dotnet publish ChemSecureWeb/ChemSecureWeb.csproj -c Release -o ${{ env.ARTIFACT_DIR }}/webapp
 
       # Publicar la API
       - name: Publish API project
-        run: dotnet publish path/to/ApiProject/ApiProject.csproj -c Release -o ${{ env.ARTIFACT_DIR }}/api
+        run: dotnet publish ChemSecureApi/ChemSecureApi.csproj -c Release -o ${{ env.ARTIFACT_DIR }}/api
 
       # Preparar la carpeta final combinando ambos artefactos
       - name: Prepare final deploy package
