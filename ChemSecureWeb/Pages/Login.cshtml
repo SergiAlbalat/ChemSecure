@@ -20,15 +20,15 @@
             <div asp-validation-summary="All" class="text-danger"></div>
 
             <div>
-                <label asp-for="Username">User</label>
-                <input asp-for="Username" type="text" placeholder="Insert Username" />
-                <span asp-validation-for="Username" class="text-danger"></span>
+                <label asp-for="Login.Email">User</label>
+                <input asp-for="Login.Email" type="text" placeholder="Insert Email" />
+                <span asp-validation-for="Login.Email" class="text-danger"></span>
             </div>
 
             <div>
-                <label asp-for="Password">Password</label>
-                <input asp-for="Password" type="password" placeholder="Insert Password" />
-                <span asp-validation-for="Password" class="text-danger"></span>
+                <label asp-for="Login.Password">Password</label>
+                <input asp-for="Login.Password" type="password" placeholder="Insert Password" />
+                <span asp-validation-for="Login.Password" class="text-danger"></span>
             </div>
 
             <button type="submit">Submit</button>
