@@ -1,0 +1,114 @@
+﻿/* Reset global */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Fondo con degradado que evoca sostenibilidad y tecnología */
+body {
+    background: linear-gradient(135deg, #004d26, #66cc66);
+    color: #333;
+}
+
+/* Contenedor principal centrado */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+/* Caja del formulario de login */
+.login-form {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    animation: fadeIn 1.5s ease-in;
+}
+
+/* Animación de aparición para darle un toque digital */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Título del formulario */
+.login-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #004d26;
+}
+
+/* Estilos para los campos de entrada */
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+}
+
+    .login-form input[type="text"]:focus,
+    .login-form input[type="password"]:focus {
+        border-color: #66cc66;
+    }
+
+/* Botón de envío */
+.login-form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #004d26;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 16px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .login-form button:hover {
+        background-color: #003822;
+    }
+
+/* Estilo para enlaces, por ejemplo "Olvidó contraseña?" */
+.login-form a {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #004d26;
+    text-decoration: none;
+}
+
+    .login-form a:hover {
+        text-decoration: underline;
+    }
+
+/* Clase opcional para acentos digitales, puedes aplicarla a elementos decorativos */
+.digital-border {
+    border: 2px solid transparent;
+    border-image: linear-gradient(45deg, #66cc66, #004d26);
+    border-image-slice: 1;
+}
+
+/* Diseño responsivo para dispositivos móviles */
+@media (max-width: 480px) {
+    .login-form {
+        margin: 20px;
+        padding: 20px;
+    }
+}
