@@ -1,0 +1,41 @@
+﻿@page
+@model ChemSecureWeb.Pages.LoginModel
+@{
+    ViewData["Title"] = "Inicio de Sesión";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/login.css" />
+</head>
+<body>
+    <div class="login-container">
+        <form method="post" class="login-form">
+            <h2>Login</h2>
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div>
+                <label asp-for="Username">User</label>
+                <input asp-for="Username" type="text" placeholder="Insert Username" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+
+            <div>
+                <label asp-for="Password">Password</label>
+                <input asp-for="Password" type="password" placeholder="Insert Password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <button type="submit">Submit</button>
+            <a asp-page="/Account/ForgotPassword">Forgot your password?</a>
+        </form>
+    </div>
+
+    <partial name="_ValidationScriptsPartial" />
+</body>
+</html>
