@@ -100,7 +100,7 @@ namespace ChemSecureApi.Controllers
             return NoContent();
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPut("put/{id}")]
         public async Task<IActionResult> PutTank(TankInsertDTO tankDto, int id)
         {
