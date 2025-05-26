@@ -50,13 +50,16 @@ namespace ChemSecureWeb.Pages
                         }
                         _logger.LogInformation("Login succesful");
                         Response.Cookies.Append("jwtToken", token, new CookieOptions { HttpOnly = false });
-                        return RedirectToPage("/Index");
+                        ModelState.AddModelError(string.Empty, "LOG IN SUCCESFULL");
+                       _logger.LogInformation($"Token obtenido: {token}");
+                        //return RedirectToPage("/Index");
                     }
                 }
                 else
                 {
                     _logger.LogInformation("Login failed");
                     ErrorMessage = "Incorrect information or unauthorized acces.";
+                    ModelState.AddModelError(string.Empty, "LOG IN FAILED");
                 }
             }
             catch (Exception ex)

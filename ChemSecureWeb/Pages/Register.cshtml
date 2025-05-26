@@ -1,12 +1,17 @@
-﻿@page
+@page
 @model ChemSecureWeb.Pages.RegisterModel
 @{
     ViewData["Title"] = "Register";
 }
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/register.css" />
+}
+
 <div class="register-container">
     <div class="card register-card">
-        <div class="card-header">
-            <h2><i class="bi bi-person-plus-fill me-2"></i>@ViewData["Title"]</h2>
+        <div class="card-header text-center w-100">
+            <h2 class="text-center"><i class="bi bi-person-plus-fill me-2"></i>@ViewData["Title"]</h2>
         </div>
         <div class="card-body">
 
@@ -51,7 +56,7 @@
                 </div>
 
                 <div class="d-grid">
-                    <button type="submit" class="btn btn-register text-black"> Registrar-se</button>
+                    <button type="submit" class="btn btn-register"> Registrar-se</button>
                 </div>
             </form>
 

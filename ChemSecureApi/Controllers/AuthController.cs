@@ -1,4 +1,4 @@
-﻿using ChemSecureApi.Data;
+using ChemSecureApi.Data;
 using ChemSecureApi.DTOs;
 using ChemSecureApi.Model;
 using Microsoft.AspNetCore.Authorization;
@@ -31,7 +31,7 @@ namespace ChemSecureApi.Controllers
         /// </summary>
         /// <param name="userDTO">The data for the new entry</param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO userDTO)
         {
