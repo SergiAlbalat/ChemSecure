@@ -119,5 +119,23 @@ namespace ChemSecureApi.Controllers
             }
             return BadRequest(result.Errors);
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("manager/register")]
+        public async Task<IActionResult> RegisterManager([FromBody] RegisterDTO userDTO)
+        {
+            var user = new User { UserName = userDTO.Name, Email = userDTO.Email, PhoneNumber = userDTO.Phone, Address = userDTO.Address };
+            var result = await _userManager.CreateAsync(user, userDTO.Password);
+            var roleResult = new IdentityResult();
+            if (result.Succeeded)
+            {
+                roleResult = await _userManager.AddToRoleAsync(user, "Manager");
+            }
+            if (result.Succeeded && roleResult.Succeeded)
+            {
+                return Ok("Manager registered");
+            }
+            return BadRequest(result.Errors);
+        }
     }
 }

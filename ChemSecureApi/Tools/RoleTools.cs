@@ -13,7 +13,7 @@ namespace ChemSecureApi.Tools
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-            string[] rols = { "Admin", "User" };
+            string[] rols = { "Admin", "User", "Manager" };
 
             foreach (var rol in rols)
             {

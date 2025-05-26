@@ -40,7 +40,6 @@ namespace ChemSecureApi.Controllers
             }
             Warning warning = new Warning
             {
-                Id = warningDTO.Id,
                 ClientName = warningDTO.ClientName,
                 Capacity = warningDTO.Capacity,
                 CurrentVolume = warningDTO.CurrentVolume,
