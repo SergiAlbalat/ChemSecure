@@ -140,6 +140,7 @@ namespace ChemSecureWeb.Pages
             {
                 _logger.LogError(ex, "Error al obtener información del usuario");
             }
+
         }
     }
 }
