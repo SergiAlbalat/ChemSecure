@@ -37,7 +37,7 @@ namespace ChemSecureApi.Controllers
             return Ok(tanksDTO);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Tank>> GetTank(int id)
         {
