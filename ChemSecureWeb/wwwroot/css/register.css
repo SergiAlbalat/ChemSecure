@@ -1,4 +1,4 @@
-﻿/* Reset global */
+/* Reset global */
 html, body {
     margin: 0;
     padding: 0;
@@ -20,14 +20,19 @@ body {
     height: 100%;
 }
 
+/* Centrar el título en la tarjeta */
+.card-header {
+    text-align: center;
+}
+
 /* Caja del formulario de registro */
-.register-form {
+.register-form, .register-card {
     background-color: rgba(255, 255, 255, 0.9);
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
     animation: fadeIn 1.5s ease-in;
 }
 
@@ -45,10 +50,11 @@ body {
 }
 
 /* Título del formulario */
-.register-form h2 {
+.register-form h2, .card-header h2 {
     text-align: center;
     margin-bottom: 20px;
     color: #004d26;
+    width: 100%;
 }
 
 /* Estilos para los campos de entrada */
@@ -69,10 +75,10 @@ body {
 }
 
 /* Botón de envío */
-.register-form button {
+.register-form button, .btn-register {
     width: 100%;
     padding: 12px;
-    background-color: #004d26;
+    background-color: #66cc66;
     border: none;
     border-radius: 4px;
     color: #fff;
@@ -82,8 +88,8 @@ body {
     transition: background-color 0.3s ease;
 }
 
-    .register-form button:hover {
-        background-color: #003822;
+    .register-form button:hover, .btn-register:hover {
+        background-color: #4caf50;
     }
 
 /* Estilo para enlaces, por ejemplo para volver al login */
@@ -101,7 +107,7 @@ body {
 
 /* Diseño responsivo para dispositivos móviles */
 @media (max-width: 480px) {
-    .register-form {
+    .register-form, .register-card {
         margin: 20px;
         padding: 20px;
     }
