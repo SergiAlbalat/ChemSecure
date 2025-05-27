@@ -2,6 +2,7 @@ using ChemSecureWeb.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
@@ -14,6 +15,7 @@ namespace ChemSecureWeb.Pages
         private readonly IHttpClientFactory _httpClientFactory;
         
         public List<TankDTO> tanks = new List<TankDTO>();
+        public string UserName { get; private set; } = string.Empty;
         public string UserEmail { get; private set; } = string.Empty;
         public string UserId { get; private set; } = string.Empty;
         public string ErrorMessage { get; private set; } = string.Empty;
@@ -39,7 +41,6 @@ namespace ChemSecureWeb.Pages
                 if (string.IsNullOrEmpty(token))
                 {
                     ErrorMessage = "You must be logged in to view your tanks.";
-                    CreateSampleTanks();
                     return;
                 }
                 
@@ -65,51 +66,143 @@ namespace ChemSecureWeb.Pages
                         if (userTanks != null && userTanks.Any())
                         {
                             tanks = userTanks;
-                            _logger.LogInformation($"Retrieved {tanks.Count} tanks for user {UserEmail}");
+                            _logger.LogInformation($"Retrieved {tanks.Count} tanks for user {UserName}");
                         }
                         else
                         {
-                            _logger.LogWarning($"No tanks found for user {UserEmail}");
-                            CreateSampleTanks();
+                            _logger.LogWarning($"No tanks found for user {UserName}");
+                           
                         }
                     }
                     else
                     {
-                        _logger.LogWarning($"API returned status code: {response.StatusCode}. Using sample tanks.");
-                        // Si hay un error con la API, crear tanques de ejemplo
-                        CreateSampleTanks();
+                        _logger.LogWarning($"API returned status code: {response.StatusCode}.");
+                       
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogWarning($"Error calling API: {ex.Message}. Using sample tanks.");
-                    // Si hay una excepción al llamar a la API, crear tanques de ejemplo
-                    CreateSampleTanks();
+                    _logger.LogWarning($"Error calling API: {ex.Message}");
+                    
                 }
             }
             catch (Exception ex)
             {
                 ErrorMessage = "Error connecting to the server.";
                 _logger.LogError(ex, "Error retrieving user tanks from API");
-                // En caso de error, crear tanques de ejemplo
-                CreateSampleTanks();
+             
             }
         }
-        
-        private void CreateSampleTanks()
+
+        public async Task<IActionResult> OnPostAddWarning(int tankId)
         {
-            // Crear tanques de ejemplo con el usuario actual
-            tanks.Add(new TankDTO { Id = 1, Capacity = 6, CurrentVolume = 2.4, Type = residusType.Acids, UserId = UserId, UserEmail = UserEmail });
-            tanks.Add(new TankDTO { Id = 2, Capacity = 20, CurrentVolume = 13, Type = residusType.AqueousSolutions, UserId = UserId, UserEmail = UserEmail });
-            tanks.Add(new TankDTO { Id = 3, Capacity = 20, CurrentVolume = 20, Type = residusType.HalogenatedSolvents, UserId = UserId, UserEmail = UserEmail });
-            tanks.Add(new TankDTO { Id = 4, Capacity = 20, CurrentVolume = 0, Type = residusType.NonHalogenatedSolvents, UserId = UserId, UserEmail = UserEmail });
+            // Get user information and load tanks before processing the warning
+            GetUserInfo();
+            await GetUserTanksFromApiAsync();
+
+            var token = HttpContext.Session.GetString("AuthToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                TempData["ErrorMessage"] = "You must be logged in to send warnings.";
+                return RedirectToPage();
+            }
+
+            // Get tank information
+            var tank = tanks.FirstOrDefault(t => t.Id == tankId);
+            if (tank == null)
+            {
+                TempData["ErrorMessage"] = "The specified tank was not found.";
+                return RedirectToPage();
+            }
+
+            // Verify that the tank is at least 65% full
+            if (tank.Percentage < 65)
+            {
+                TempData["ErrorMessage"] = "Warnings can only be sent for tanks that are at least 65% full.";
+                return RedirectToPage();
+            }
+
+            var client = _httpClientFactory.CreateClient("ChemSecureApi");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            try
+            {              
+                string clientName = UserName;
+
+
+
+                if (string.IsNullOrEmpty(clientName))
+                {
+                    clientName = "User";
+                    _logger.LogWarning("Could not get username, using default value");
+                }
+                // Create the DTO with the complete information
+                var warningDTO = new
+                {
+                    ClientName = clientName,
+                    Capacity = tank.Capacity,
+                    CurrentVolume = tank.CurrentVolume,
+                    TankId = tank.Id,
+                    Type = tank.Type
+                };
+
+                var apiUrl = "api/Warning/add-warning";
+                _logger.LogInformation("Sending POST request to {ApiUrl} to add warning for tank {TankId}", apiUrl, tankId);
+                
+                // Create the request content with the DTO
+                var content = new StringContent(
+                    JsonSerializer.Serialize(warningDTO),
+                    System.Text.Encoding.UTF8,
+                    "application/json");
+                
+                var response = await client.PostAsync(apiUrl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation($"Warning sent successfully for tank ID: {tankId}");
+                    TempData["SuccessMessage"] = "Warning sent successfully! The management team has been notified.";
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogWarning($"Error sending warning for tank ID {tankId}. Status: {response.StatusCode}. API Details: {errorContent}");
+
+                    if (response.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        TempData["ErrorMessage"] = $"Error: Could not send the warning ({errorContent})";
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        TempData["ErrorMessage"] = "Authorization error. Please log in again.";
+                    }
+                    else if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        TempData["ErrorMessage"] = "Error: The warning service is not available.";
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = $"Error registering the warning (Code: {response.StatusCode}).";
+                    }
+                }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, "Network error when sending warning for tank ID: {TankId}", tankId);
+                TempData["ErrorMessage"] = "Connection error while trying to send the warning.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error in OnPostAddWarning for tank ID: {TankId}", tankId);
+                TempData["ErrorMessage"] = "Unexpected error while processing your warning.";
+            }
+
+            return RedirectToPage();
         }
-        
         private void GetUserInfo()
         {
             try
             {
-                // Obtener el token JWT de la sesión
+                // Get JWT token from session
                 var token = HttpContext.Session.GetString("AuthToken");
                 
                 if (!string.IsNullOrEmpty(token))
@@ -117,9 +210,23 @@ namespace ChemSecureWeb.Pages
                     var tokenHandler = new JwtSecurityTokenHandler();
                     var jwtToken = tokenHandler.ReadJwtToken(token);
                     
-                    // Obtener el correo electrónico del usuario desde el token
+                    // Get user information from the token
                     var emailClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
                     var nameClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                    var usernameClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+                    
+                    // If ClaimTypes.Name is not available, try common alternative claim types
+                    if (string.IsNullOrEmpty(usernameClaim))
+                    {
+                        usernameClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "name" || 
+                                                                       c.Type == "username" || 
+                                                                       c.Type == "preferred_username" || 
+                                                                       c.Type == "sub")?.Value;
+                    }
+                    
+                    // Log all available claims for debugging
+                    _logger.LogInformation("Available claims in token: {Claims}", 
+                        string.Join(", ", jwtToken.Claims.Select(c => $"{c.Type}:{c.Value}")));
                     
                     if (!string.IsNullOrEmpty(emailClaim))
                     {
@@ -130,6 +237,25 @@ namespace ChemSecureWeb.Pages
                     {
                         UserId = nameClaim;
                     }
+                    
+                    if (!string.IsNullOrEmpty(usernameClaim))
+                    {
+                        UserName = usernameClaim;
+                        _logger.LogInformation("Username set to: {Username}", UserName);
+                    }
+                    else
+                    {
+                        // Fallback to email username part if no username claim is found
+                        if (!string.IsNullOrEmpty(emailClaim) && emailClaim.Contains("@"))
+                        {
+                            UserName = emailClaim.Split('@')[0];
+                            _logger.LogInformation("Username set from email: {Username}", UserName);
+                        }
+                        else
+                        {
+                            _logger.LogWarning("Could not determine username from token claims");
+                        }
+                    }
                 }
                 else
                 {
@@ -138,9 +264,8 @@ namespace ChemSecureWeb.Pages
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al obtener información del usuario");
+                _logger.LogError(ex, "Error getting user information");
             }
-
         }
     }
 }
