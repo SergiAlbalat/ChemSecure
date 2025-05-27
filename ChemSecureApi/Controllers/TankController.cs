@@ -150,6 +150,10 @@ namespace ChemSecureApi.Controllers
             // Actualizar solo la propiedad CurrentVolume
             tank.CurrentVolume = newVolume;
 
+            if(newVolume > tank.Capacity)
+            {
+                return BadRequest("The volume exceeds the tank capacity.");
+            }
             try
             {
                 await _context.SaveChangesAsync();
