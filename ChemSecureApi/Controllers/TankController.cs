@@ -38,7 +38,7 @@ namespace ChemSecureApi.Controllers
         }
 
         [Authorize]
-        [HttpGet("{id}")]
+        [HttpGet("{id}")]    
         public async Task<ActionResult<Tank>> GetTank(int id)
         {
             var tank = await _context.Tanks

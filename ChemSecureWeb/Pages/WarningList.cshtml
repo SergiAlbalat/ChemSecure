@@ -1,0 +1,58 @@
+@page
+@model ChemSecureWeb.Pages.WarningListModel
+@{
+    ViewData["title"] = "Warning List";
+}
+
+<link rel="stylesheet" href="~/css/warninglist.css" asp-append-version="true" />
+
+<div class="warning-container">
+    <h2 class="warning-header">Warning List</h2>
+    
+    <div class="table-responsive">
+        <table class="warning-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tank ID</th>
+                    <th>Client</th>
+                    <th>Volume</th>
+                    <th>Capacity</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var warning in Model.Warnings)
+                {
+                    var percentage = (warning.CurrentVolume / warning.Capacity) * 100;
+                    var statusClass = percentage >= 90 ? "status-critical" : 
+                                      percentage >= 80 ? "status-warning" : 
+                                      percentage >= 70 ? "status-warning" : "status-info";
+                    var statusText = percentage >= 90 ? "Critical" :
+                                     percentage >= 80 ? "Warning" :
+                                     percentage >= 70 ? "Warning" : "Info";
+                    
+                    <tr>
+                        <td>@warning.Id</td>
+                        <td>@warning.TankId</td>
+                        <td>@warning.ClientName</td>
+                        <td>@warning.CurrentVolume.ToString("F2") L</td>
+                        <td>@warning.Capacity.ToString("F2") L</td>
+                        <td>@warning.Type</td>
+                        <td>@warning.CreationDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td><span class="status-badge @statusClass">@statusText</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    
+    @if (!Model.Warnings.Any())
+    {
+        <div class="text-center py-4 text-muted">
+            No warnings found.
+        </div>
+    }
+</div>
