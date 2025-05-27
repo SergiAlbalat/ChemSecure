@@ -1,0 +1,64 @@
+@page
+@model ChemSecureWeb.Pages.AddTankModel
+@{
+    ViewData["Title"] = "Añadir Nuevo Tanque";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+    <hr />
+    
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorMessage
+        </div>
+    }
+    
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post" id="addTankForm">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="form-group mb-3">
+                    <label asp-for="NewTank.Capacity" class="control-label">Capacidad (litros)</label>
+                    <input asp-for="NewTank.Capacity" class="form-control" type="number" step="0.01" min="0" />
+                    <span asp-validation-for="NewTank.Capacity" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label asp-for="NewTank.CurrentVolume" class="control-label">Volumen Actual (litros)</label>
+                    <input asp-for="NewTank.CurrentVolume" class="form-control" type="number" step="0.01" min="0" />
+                    <span asp-validation-for="NewTank.CurrentVolume" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label asp-for="NewTank.Type" class="control-label">Tipo de Residuo</label>
+                    <select asp-for="NewTank.Type" class="form-select" asp-items="Html.GetEnumSelectList<ChemSecureWeb.Model.residusType>()">
+                        <option value="">-- Seleccione un tipo --</option>
+                    </select>
+                    <span asp-validation-for="NewTank.Type" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary" id="submitButton">Guardar</button>
+                    <a asp-page="/Tank" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById('addTankForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...';
+            this.submit();
+        });
+    </script>
+}
