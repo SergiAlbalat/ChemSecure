@@ -43,7 +43,9 @@ namespace ChemSecureApi.Controllers
                 ClientName = warningDTO.ClientName,
                 Capacity = warningDTO.Capacity,
                 CurrentVolume = warningDTO.CurrentVolume,
-                CreationDate = DateTime.UtcNow
+                CreationDate = DateTime.UtcNow,
+                TankId = warningDTO.TankId,
+                Type = warningDTO.Type
             };
             _context.Warnings.Add(warning);
             await _context.SaveChangesAsync();
