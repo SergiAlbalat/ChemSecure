@@ -1,4 +1,4 @@
-﻿using ChemSecureApi.Data;
+using ChemSecureApi.Data;
 using ChemSecureApi.DTOs;
 using ChemSecureApi.Model;
 using Microsoft.AspNetCore.Authorization;

@@ -1,5 +1,6 @@
 @page
 @model ChemSecureWeb.Pages.AddTankModel
+@using ChemSecureWeb.Tools
 @{
     ViewData["Title"] = "Añadir Nuevo Tanque";
 }
@@ -45,7 +46,12 @@
                     <a asp-page="/Tank" class="btn btn-secondary">Cancelar</a>
                 </div>
             </form>
-		</div>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-center">
+            <img id="tankImage" src="@Url.Content("~/img/EmptyTank.png")" 
+                 alt="Tank" 
+                 class="img-fluid">
+        </div>
     </div>
 </div>
 
@@ -53,6 +59,66 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        function updateTankImage() {
+            const capacity = parseFloat(document.getElementById('NewTank_Capacity').value) || 0;
+            const currentVolume = parseFloat(document.getElementById('NewTank_CurrentVolume').value) || 0;
+            
+            // Calculate fill percentage
+            const fillPercentage = capacity > 0 ? (currentVolume / capacity * 100) : 0;
+            
+            // Update tank image using TankTools
+            const tankImage = document.getElementById('tankImage');
+            
+            // Use Razor to get the correct image path
+            const imageMap = {
+                '0': '@Url.Content("~/img/EmptyTank.png")',
+                '10': '@Url.Content("~/img/Tank-10.jpg")',
+                '20': '@Url.Content("~/img/Tank-20.jpg")',
+                '30': '@Url.Content("~/img/Tank-30.jpg")',
+                '40': '@Url.Content("~/img/Tank-40.jpg")',
+                '50': '@Url.Content("~/img/Tank-50.jpg")',
+                '60': '@Url.Content("~/img/Tank-60.jpg")',
+                '70': '@Url.Content("~/img/Tank-70.jpg")',
+                '80': '@Url.Content("~/img/Tank-80.jpg")',
+                '90': '@Url.Content("~/img/Tank-90.jpg")',
+                '100': '@Url.Content("~/img/FullTank.jpg")'
+            };
+
+            // Find the closest percentage
+            let closestPercentage = 0;
+            for (let key in imageMap) {
+                if (fillPercentage >= parseInt(key)) {
+                    closestPercentage = parseInt(key);
+                }
+            }
+
+            tankImage.src = imageMap[closestPercentage];
+            
+            // Update tank size
+            const sizeMap = {
+                '5000': '100px',
+                '12000': '200px',
+                'default': '200px'
+            };
+
+            let size = '200px';
+            if (capacity < 5000) {
+                size = '100px';
+            } else if (capacity > 12000) {
+                size = '400px';
+            }
+
+            tankImage.style.maxHeight = size;
+        }
+
+        // Update image when form values change
+        document.getElementById('NewTank_Capacity').addEventListener('input', updateTankImage);
+        document.getElementById('NewTank_CurrentVolume').addEventListener('input', updateTankImage);
+
+        // Initial update
+        updateTankImage();
+
+        // Form submission handling
         document.getElementById('addTankForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const submitButton = document.getElementById('submitButton');
