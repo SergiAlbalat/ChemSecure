@@ -17,9 +17,9 @@
                     <i class="bi bi-plus-circle"></i> Add New Tank
                 </a>
             </div>
-            
+
             <hr class="my-4">
-            
+
             @if (!string.IsNullOrEmpty(Model.ErrorMessage))
             {
                 <div class="alert alert-danger" role="alert">
@@ -30,18 +30,19 @@
     </div>
 
     <div class="row">
-            @if (Model.tanks.Count == 0 && string.IsNullOrEmpty(Model.ErrorMessage))
-            {
-                <div class="col-12">
-                    <div class="alert alert-info" role="alert">
-                        <i class="bi bi-info-circle-fill me-2"></i> No tanks found associated with your account. Contact the administrator if you believe this is an error.
-                    </div>
+        @if (Model.tanks.Count == 0 && string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="col-12">
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle-fill me-2"></i> No tanks found associated with your account. Contact the administrator if you believe this is an error.
                 </div>
-            }
-            
-            @foreach (var tank in Model.tanks)
-            {
+            </div>
+        }
+
+        @foreach (var tank in Model.tanks)
+        {
             string imageURL = TankTools.TankImage(tank.Percentage);
+            string size = TankTools.TankSize(tank.Capacity);
             string alertClass = tank.Percentage >= 65 ? "alert-warning" : (tank.Percentage >= 90 ? "alert-danger" : "");
 
             <div class="col-md-6 col-lg-4 mb-4">
@@ -51,7 +52,7 @@
                         <span class="badge bg-primary">@tank.Type</span>
                     </div>
                     <div class="card-body text-center">
-                        <img src="@imageURL" alt="Tanque al @tank.Percentage%" class="img-fluid mb-3" style="max-height: 200px;" />
+                        <img src="@imageURL" alt="Tanque al @tank.Percentage%" class="img-fluid mb-3" style="max-height: @size;" />
                         
                         <div class="progress mb-3" style="height: 25px;">
                             @{
