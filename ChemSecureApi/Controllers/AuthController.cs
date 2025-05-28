@@ -120,6 +120,11 @@ namespace ChemSecureApi.Controllers
             return BadRequest(result.Errors);
         }
 
+        /// <summary>
+        /// Method for registering a new manager
+        /// </summary>
+        /// <param name="userDTO">The new manager information</param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin")]
         [HttpPost("manager/register")]
         public async Task<IActionResult> RegisterManager([FromBody] RegisterDTO userDTO)

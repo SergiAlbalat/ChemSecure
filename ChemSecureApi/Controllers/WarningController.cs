@@ -18,6 +18,10 @@ namespace ChemSecureApi.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Retrieves a list of warnings from the database.
+        /// </summary>
+        /// <returns>All the warning in the database or a NotFound if there is no warning there.</returns>
         [Authorize(Roles = "Admin, Manager")]
         [HttpGet("warnings")]
         public async Task<IActionResult> GetWarnings()
@@ -30,6 +34,11 @@ namespace ChemSecureApi.Controllers
             return Ok(warnings);
         }
 
+        /// <summary>
+        /// Adds a new warning to the system based on the provided data.
+        /// </summary>
+        /// <param name="warningDTO">The data transfer object with the new warning data.</param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost("add-warning")]
         public async Task<IActionResult> AddWarning([FromBody] WarningDTO warningDTO)
