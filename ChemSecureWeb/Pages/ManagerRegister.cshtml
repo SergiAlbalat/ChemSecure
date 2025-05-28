@@ -1,7 +1,7 @@
 @page
 @model ChemSecureWeb.Pages.ManagerRegisterModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Register a Manager";
 }
 
 @section Styles {
@@ -20,7 +20,7 @@
                 <div class="alert alert-danger mb-3">
                     <div class="d-flex align-items-center mb-1">
                         <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                        <strong>Error en el registre, revisa les dades:</strong>
+                        <strong> Error trying to register, check the fields.</strong>
                     </div>
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 </div>
@@ -30,13 +30,13 @@
 
                 <div class="form-floating mb-3">
                     <input asp-for="RegisterData.Name" class="form-control" placeholder="Name" required />
-                    <label asp-for="RegisterData.Name">Nom</label>
+                    <label asp-for="RegisterData.Name">Name</label>
                     <span asp-validation-for="RegisterData.Name" class="text-danger small"></span>
                 </div>
 
                 <div class="form-floating mb-3">
                     <input asp-for="RegisterData.Email" type="email" class="form-control" placeholder="Email" required />
-                    <label asp-for="RegisterData.Email">Correu Electrònic</label>
+                    <label asp-for="RegisterData.Email">Email</label>
                     <span asp-validation-for="RegisterData.Email" class="text-danger small"></span>
                 </div>
                 <div class="form-floating mb-4">
@@ -51,19 +51,14 @@
                 </div>
                 <div class="form-floating mb-4">
                     <input asp-for="RegisterData.Password" type="password" class="form-control" placeholder="Password" required />
-                    <label asp-for="RegisterData.Password">Contrasenya</label>
+                    <label asp-for="RegisterData.Password">Password</label>
                     <span asp-validation-for="RegisterData.Password" class="text-danger small"></span>
                 </div>
 
                 <div class="d-grid">
-                    <button type="submit" class="btn btn-register"> Registrar-se</button>
+                    <button type="submit" class="btn btn-register">Register</button>
                 </div>
             </form>
-
-            <div class="text-center login-link">
-                Ja tens un compte? <a asp-page="/Login">Inicia sessió aquí</a>
-            </div>
-
         </div>
     </div>
 </div>
