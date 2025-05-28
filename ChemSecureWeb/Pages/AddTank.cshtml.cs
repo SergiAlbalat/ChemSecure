@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
 
+
 namespace ChemSecureWeb.Pages
 {
     public class AddTankModel : PageModel
@@ -29,7 +30,7 @@ namespace ChemSecureWeb.Pages
         
         public IActionResult OnGet()
         {
-            // Verificar si el usuario está autenticado
+            // Check if user is authenticated
             var token = HttpContext.Session.GetString("AuthToken");
             if (string.IsNullOrEmpty(token))
             {
@@ -39,54 +40,31 @@ namespace ChemSecureWeb.Pages
             return Page();
         }
         
-        private string GetUserIdFromToken()
-        {
-            var token = HttpContext.Session.GetString("AuthToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return string.Empty;
-            }
-
-            try
-            {
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var jwtToken = tokenHandler.ReadJwtToken(token);
-                return jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            }
-            catch (Exception)
-            {
-                return string.Empty;
-            }
-        }
-
+      
+        
         public async Task<IActionResult> OnPostAsync()
         {
             try
             {
-                // Primero obtener el token y el ID del usuario
+                // First, get the token
                 var token = HttpContext.Session.GetString("AuthToken");
                 if (string.IsNullOrEmpty(token))
                 {
-                    ErrorMessage = "La sesión ha expirado. Por favor, inicie sesión nuevamente.";
+                    ErrorMessage = "Your session has expired. Please log in again.";
                     return RedirectToPage("/Login");
                 }
 
-                // Obtener el ID del usuario autenticado
-                var userId = GetUserIdFromToken();
-                if (string.IsNullOrEmpty(userId))
+                // Validate that a ClientId has been provided
+                if (string.IsNullOrEmpty(NewTank.ClientId))
                 {
-                    ErrorMessage = "No se pudo obtener la información del usuario autenticado.";
+                    ErrorMessage = "Client ID is required.";
                     return Page();
                 }
-
-
-                // Asignar el ClientId al nuevo tanque ANTES de la validación
-                NewTank.ClientId = userId;
                 
-                // Ahora validar el modelo
+                // Now validate the model
                 if (!ModelState.IsValid)
                 {
-                    // Agregar errores de validación al ModelState
+                    // Add validation errors to ModelState
                     foreach (var modelStateKey in ModelState.Keys)
                     {
                         var modelStateVal = ModelState[modelStateKey];
@@ -100,16 +78,15 @@ namespace ChemSecureWeb.Pages
                     return Page();
                 }
 
-                // Validar que el volumen actual no sea mayor que la capacidad
+                // Validate that current volume is not greater than capacity
                 if (NewTank.CurrentVolume > NewTank.Capacity)
                 {
-                    ErrorMessage = "El volumen actual no puede ser mayor que la capacidad del tanque.";
+                    ErrorMessage = "Current volume cannot be greater than tank capacity.";
                     return Page();
                 }
 
 
-                // Asignar el ClientId al nuevo tanque
-                NewTank.ClientId = userId;
+                // ClientId is already assigned from the form
                 
                 var client = _httpClientFactory.CreateClient("ChemSecureApi");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -118,13 +95,13 @@ namespace ChemSecureWeb.Pages
                 
                 if (response.IsSuccessStatusCode)
                 {
-                    TempData["SuccessMessage"] = "Tanque creado exitosamente.";
+                    TempData["SuccessMessage"] = "Tank created successfully.";
                     return RedirectToPage("/Tank");
                 }
                 else
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
-                    ErrorMessage = $"Error al crear el tanque: {response.StatusCode}";
+                    ErrorMessage = $"Error creating tank: {response.StatusCode}";
                     
                     // Intentar deserializar el error como un objeto JSON
                     try
@@ -148,21 +125,21 @@ namespace ChemSecureWeb.Pages
                     }
                     catch (JsonException)
                     {
-                        // Si no se puede deserializar como JSON, usar el mensaje de error original
-                        ErrorMessage = $"Error al crear el tanque: {response.StatusCode} - {errorContent}";
+                        // If cannot deserialize as JSON, use the original error message
+                        ErrorMessage = $"Error creating tank: {response.StatusCode} - {errorContent}";
                     }
                 }
             }
             catch (HttpRequestException ex)
             {
-                ErrorMessage = $"Error de conexión: {ex.Message}";
+                ErrorMessage = $"Connection error: {ex.Message}";
             }
             catch (Exception ex)
             {
-                ErrorMessage = $"Error inesperado: {ex.Message}";
+                ErrorMessage = $"Unexpected error: {ex.Message}";
             }
             
-            // Si llegamos aquí, hubo un error
+            // If we got here, there was an error
             TempData["ErrorMessage"] = ErrorMessage;
             return Page();
         }
