@@ -9,50 +9,119 @@
 <div class="warning-container">
     <h2 class="warning-header">Warning List</h2>
     
-    <div class="table-responsive">
-        <table class="warning-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Tank ID</th>
-                    <th>Client</th>
-                    <th>Volume</th>
-                    <th>Capacity</th>
-                    <th>Type</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var warning in Model.Warnings)
-                {
-                    var percentage = (warning.CurrentVolume / warning.Capacity) * 100;
-                    var statusClass = percentage >= 90 ? "status-critical" : 
-                                      percentage >= 80 ? "status-high-warning" : 
-                                      percentage >= 70 ? "status-warning" : "status-normal";
-                    var statusText = percentage >= 90 ? "Critical" :
-                                     percentage >= 80 ? "High-Warning" :
-                                     percentage >= 70 ? "Warning" : "Normal";
-                    
-                    <tr>
-                        <td>@warning.Id</td>
-                        <td>@warning.TankId</td>
-                        <td>@warning.ClientName</td>
-                        <td>@warning.CurrentVolume.ToString("F2") L</td>
-                        <td>@warning.Capacity.ToString("F2") L</td>
-                        <td>@warning.Type</td>
-                        <td>@warning.CreationDate.ToString("yyyy-MM-dd HH:mm")</td>
-                        <td><span class="status-badge @statusClass">@statusText</span></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <div class="warning-tabs">
+        <a href="?tab=pending" class="tab-link @(Model.ActiveTab == "pending" ? "active" : "")">
+            <span>Pending Warnings</span>
+        </a>
+        <a href="?tab=managed" class="tab-link @(Model.ActiveTab == "managed" ? "active" : "")">
+            <span>Managed Warnings</span>
+        </a>
     </div>
     
-    @if (!Model.Warnings.Any())
+    @if (Model.ActiveTab == "pending")
     {
-        <div class="text-center py-4 text-muted">
-            No warnings found.
+        <div class="tab-content">
+            <div class="table-responsive">
+                <table class="warning-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tank ID</th>
+                            <th>Client</th>
+                            <th>Volume</th>
+                            <th>Capacity</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var warning in Model.Warnings)
+                        {
+                            var percentage = (warning.CurrentVolume / warning.Capacity) * 100;
+                            var statusClass = percentage >= 90 ? "status-critical" : 
+                                              percentage >= 80 ? "status-high-warning" : 
+                                              percentage >= 70 ? "status-warning" : "status-normal";
+                            var statusText = percentage >= 90 ? "Critical" :
+                                             percentage >= 80 ? "High-Warning" :
+                                             percentage >= 70 ? "Warning" : "Normal";
+                            
+                            <tr>
+                                <td>@warning.Id</td>
+                                <td>@warning.TankId</td>
+                                <td>@warning.ClientName</td>
+                                <td>@warning.CurrentVolume.ToString("F2") L</td>
+                                <td>@warning.Capacity.ToString("F2") L</td>
+                                <td>@warning.Type</td>
+                                <td>@warning.CreationDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td><span class="status-badge @statusClass">@statusText</span></td>
+                                <td>
+                                    <form method="post" asp-page-handler="ManageWarning" asp-route-id="@warning.Id">
+                                        <button type="submit" class="btn btn-manage">Mark as Managed</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            
+            @if (!Model.Warnings.Any())
+            {
+                <div class="text-center py-4 text-muted">
+                    No pending warnings found.
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="tab-content">
+            <div class="table-responsive">
+                <table class="warning-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tank ID</th>
+                            <th>Client</th>
+                            <th>Volume</th>
+                            <th>Capacity</th>
+                            <th>Type</th>
+                            <th>Creation Date</th>
+                            <th>Managed Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var warning in Model.ManagedWarnings)
+                        {
+                            <tr>
+                                <td>@warning.Id</td>
+                                <td>@warning.TankId</td>
+                                <td>@warning.ClientName</td>
+                                <td>@warning.CurrentVolume.ToString("F2") L</td>
+                                <td>@warning.Capacity.ToString("F2") L</td>
+                                <td>@warning.Type</td>
+                                <td>@warning.CreationDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>@(warning.ManagedDate?.ToString("yyyy-MM-dd HH:mm") ?? "N/A")</td>
+                                <td>
+                                    <form method="post" asp-page-handler="UnmanageWarning" asp-route-id="@warning.Id">
+                                        <button type="submit" class="btn btn-unmanage">Return to Pending</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            
+            @if (!Model.ManagedWarnings.Any())
+            {
+                <div class="text-center py-4 text-muted">
+                    No managed warnings found.
+                </div>
+            }
         </div>
     }
 </div>

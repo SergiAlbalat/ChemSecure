@@ -1,4 +1,4 @@
-﻿using ChemSecureApi.Data;
+using ChemSecureApi.Data;
 using ChemSecureApi.DTOs;
 using ChemSecureApi.Model;
 using Microsoft.AspNetCore.Authorization;
@@ -19,19 +19,83 @@ namespace ChemSecureApi.Controllers
         }
 
         /// <summary>
-        /// Retrieves a list of warnings from the database.
+        /// Retrieves a list of unmanaged warnings from the database.
         /// </summary>
-        /// <returns>All the warning in the database or a NotFound if there is no warning there.</returns>
+        /// <returns>All the unmanaged warnings in the database or a NotFound if there is no warning there.</returns>
         [Authorize(Roles = "Admin, Manager")]
         [HttpGet("warnings")]
         public async Task<IActionResult> GetWarnings()
         {
-            var warnings = await _context.Warnings.ToListAsync();
+            var warnings = await _context.Warnings.Where(w => !w.IsManaged).ToListAsync();
             if (warnings == null || !warnings.Any())
             {
                 return NotFound("No warnings found.");
             }
             return Ok(warnings);
+        }
+
+        /// <summary>
+        /// Retrieves a list of managed warnings from the database.
+        /// </summary>
+        /// <returns>All the managed warnings in the database or a NotFound if there is no managed warning there.</returns>
+        [Authorize(Roles = "Admin, Manager")]
+        [HttpGet("managed-warnings")]
+        public async Task<IActionResult> GetManagedWarnings()
+        {
+            var warnings = await _context.Warnings.Where(w => w.IsManaged).ToListAsync();
+            if (warnings == null || !warnings.Any())
+            {
+                return NotFound("No managed warnings found.");
+            }
+            return Ok(warnings);
+        }
+
+        /// <summary>
+        /// Marks a warning as managed.
+        /// </summary>
+        /// <param name="id">The ID of the warning to mark as managed.</param>
+        /// <returns>The updated warning or NotFound if the warning doesn't exist.</returns>
+        [Authorize(Roles = "Admin, Manager")]
+        [HttpPut("manage/{id}")]
+        public async Task<IActionResult> ManageWarning(int id)
+        {
+            var warning = await _context.Warnings.FindAsync(id);
+            if (warning == null)
+            {
+                return NotFound($"Warning with ID {id} not found.");
+            }
+
+            warning.IsManaged = true;
+            warning.ManagedDate = DateTime.UtcNow;
+
+            _context.Warnings.Update(warning);
+            await _context.SaveChangesAsync();
+
+            return Ok(warning);
+        }
+        
+        /// <summary>
+        /// Marks a warning as unmanaged (returns it to the pending list).
+        /// </summary>
+        /// <param name="id">The ID of the warning to mark as unmanaged.</param>
+        /// <returns>The updated warning or NotFound if the warning doesn't exist.</returns>
+        [Authorize(Roles = "Admin, Manager")]
+        [HttpPut("unmanage/{id}")]
+        public async Task<IActionResult> UnmanageWarning(int id)
+        {
+            var warning = await _context.Warnings.FindAsync(id);
+            if (warning == null)
+            {
+                return NotFound($"Warning with ID {id} not found.");
+            }
+
+            warning.IsManaged = false;
+            warning.ManagedDate = null;
+
+            _context.Warnings.Update(warning);
+            await _context.SaveChangesAsync();
+
+            return Ok(warning);
         }
 
         /// <summary>
@@ -54,7 +118,9 @@ namespace ChemSecureApi.Controllers
                 CurrentVolume = warningDTO.CurrentVolume,
                 CreationDate = DateTime.UtcNow,
                 TankId = warningDTO.TankId,
-                Type = warningDTO.Type
+                Type = warningDTO.Type,
+                IsManaged = false,
+                ManagedDate = null
             };
             _context.Warnings.Add(warning);
             await _context.SaveChangesAsync();

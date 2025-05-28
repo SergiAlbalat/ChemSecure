@@ -1,4 +1,4 @@
-﻿namespace ChemSecureWeb.Model
+namespace ChemSecureWeb.Model
 {
     public class WarningDTO
     {
@@ -9,5 +9,7 @@
         public DateTime CreationDate { get; set; }
         public int TankId { get; set; }
         public residusType Type { get; set; }
+        public bool IsManaged { get; set; }
+        public DateTime? ManagedDate { get; set; }
     }
 }
