@@ -11,9 +11,46 @@
 .warning-header {
     color: #004d26;
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     padding-bottom: 1rem;
     border-bottom: 2px solid #e9ecef;
+}
+
+/* Tabs Styles */
+.warning-tabs {
+    display: flex;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.tab-link {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    color: #495057;
+    text-decoration: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    margin-right: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.tab-link:hover {
+    color: #004d26;
+    border-color: #e9ecef #e9ecef #dee2e6;
+    text-decoration: none;
+}
+
+.tab-link.active {
+    color: #004d26;
+    background-color: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+    font-weight: 600;
+}
+
+.tab-content {
+    padding: 1rem 0;
 }
 
 .warning-table {
@@ -117,5 +154,39 @@
 .status-normal {
     background-color:#80e909 ;
     color: #004d26;
+}
+
+/* Manage button styles */
+.btn-manage {
+    background-color: #004d26;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-manage:hover {
+    background-color: #00391d;
+}
+
+/* Unmanage button styles */
+.btn-unmanage {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-unmanage:hover {
+    background-color: #5a6268;
 }
 
