@@ -104,13 +104,18 @@
     background-color: #f8d7da;
     color: #721c24;
 }
+.status-high-warning {
+    background-color: #ffa639;
+    color: #c24e02;
+}
 
 .status-warning {
     background-color: #fff3cd;
     color: #856404;
 }
 
-.status-info {
-    background-color: #d1ecf1;
-    color: #0c5460;
+.status-normal {
+    background-color:#80e909 ;
+    color: #004d26;
 }
+

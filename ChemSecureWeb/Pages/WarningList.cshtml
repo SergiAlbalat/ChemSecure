@@ -28,11 +28,11 @@
                 {
                     var percentage = (warning.CurrentVolume / warning.Capacity) * 100;
                     var statusClass = percentage >= 90 ? "status-critical" : 
-                                      percentage >= 80 ? "status-warning" : 
-                                      percentage >= 70 ? "status-warning" : "status-info";
+                                      percentage >= 80 ? "status-high-warning" : 
+                                      percentage >= 70 ? "status-warning" : "status-normal";
                     var statusText = percentage >= 90 ? "Critical" :
-                                     percentage >= 80 ? "Warning" :
-                                     percentage >= 70 ? "Warning" : "Info";
+                                     percentage >= 80 ? "High-Warning" :
+                                     percentage >= 70 ? "Warning" : "Normal";
                     
                     <tr>
                         <td>@warning.Id</td>
