@@ -1,10 +1,29 @@
-﻿@page
+@page
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to ChemSecure Transport</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<link rel="stylesheet" href="~/css/index.css" />
+
+<div class="index-container">
+    <div class="index-content">
+        <h1>Welcome to ChemSecure Transport</h1>
+        <div class="index-card">
+            <h2>Secure Chemical Transportation Management</h2>
+            <p>ChemSecure Transport provides a reliable and secure platform for managing chemical transportation operations.</p>
+            <p>In ChemSecure Transport we care about the environment, and therefore we keep our transporting methods as ecologically friendly as we possibly can.</p>
+        </div>
+
+        <div class="index-card">
+            <h2>Key Features</h2>
+            <ul>
+                <li>Real-time tracking of chemical shipments</li>
+                <li>Compliance management</li>
+                <li>Documentation management</li>
+                <li>Route optimization</li>
+                <li>Emergency response planning</li>
+            </ul>
+        </div>
+    </div>
 </div>
