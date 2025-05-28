@@ -36,7 +36,8 @@ namespace ChemSecureWeb.Pages
             {
                 return RedirectToPage("/Login");
             }
-            
+            SuccessMessage = TempData["SuccessMessage"] as string;
+
             return Page();
         }
         
@@ -96,7 +97,8 @@ namespace ChemSecureWeb.Pages
                 if (response.IsSuccessStatusCode)
                 {
                     TempData["SuccessMessage"] = "Tank created successfully.";
-                    return RedirectToPage("/Tank");
+
+                    return RedirectToPage("/AddTank");
                 }
                 else
                 {

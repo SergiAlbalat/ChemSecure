@@ -15,6 +15,10 @@
             @Model.ErrorMessage
         </div>
     }
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success">@Model.SuccessMessage</div>
+    }
     
     <div class="row">
         <div class="col-md-6">
