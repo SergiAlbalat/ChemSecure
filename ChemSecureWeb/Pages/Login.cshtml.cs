@@ -55,9 +55,9 @@ namespace ChemSecureWeb.Pages
                         }
                         _logger.LogInformation("Login succesful");
                         Response.Cookies.Append("jwtToken", token, new CookieOptions { HttpOnly = false });
-                        ModelState.AddModelError(string.Empty, "LOG IN SUCCESFULL");
-                       _logger.LogInformation($"Token obtenido: {token}");
-                        //return RedirectToPage("/Index");
+                       // ModelState.AddModelError(string.Empty, "LOG IN SUCCESFULL");
+                       //_logger.LogInformation($"Token obtenido: {token}"); Log to see if the token was correct and had all the information needed.
+                        return RedirectToPage("/Index");
                     }
                 }
                 else
