@@ -19,6 +19,11 @@ namespace ChemSecureApi.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Retrieves a user by their unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the user to retrieve. Cannot be null or empty.</param>
+        /// <returns>The user information</returns>
         [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDTO>> GetUser(string id)
@@ -51,6 +56,10 @@ namespace ChemSecureApi.Controllers
             return Ok(userDto);
         }
 
+        /// <summary>
+        /// Retrieves a list of users with their associated details.
+        /// </summary>
+        /// <returns>All the users in the database</returns>
         [Authorize(Roles = "Admin")]
         [HttpGet("")]
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
