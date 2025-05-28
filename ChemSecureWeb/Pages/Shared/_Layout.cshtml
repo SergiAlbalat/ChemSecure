@@ -1,5 +1,9 @@
-﻿@{
+@{
     var loggedIn = Tools.TokenHelper.IsTokenSession(Context.Session.GetString("AuthToken"));
+    var userRole = Context.Session.GetString("UserRole");
+    var isAdmin = userRole == "Admin";
+    var isManager = userRole == "Manager";
+    var isUser = userRole == "User";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -19,14 +23,11 @@
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-page="/Index"><img class="navbar-brand" src="~/img/ChemSecureLogo.png" style="max-height:90px" /></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Register">Register</a>
-                        </li>
                         @if (Context.Session.GetString("AuthToken") == null)
                         {
                             <li class="nav-item">
@@ -36,14 +37,30 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/Tank">Tanks</a>
-                            </li>
-                            <li class="nav-item ml-auto">
                                 <a class="nav-link text-dark" asp-area="" asp-page="/Logout">Logout</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/WarningList">WarningList</a>
-                            </li>
+                            @if(!isManager && !isAdmin)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/Tank">Tanks</a>
+                                </li>
+                            }
+                            @if (isManager)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/WarningList">WarningList</a>
+                                </li>
+                            }
+                            @if (isAdmin)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/Register">Register User</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/AddTank">Add New Tank</a>
+                                </li>
+                            }
+
                         }
                     </ul>
                 </div>
