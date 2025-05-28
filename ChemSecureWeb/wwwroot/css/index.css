@@ -1,0 +1,120 @@
+/* Reset global */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Fondo con degradado que evoca sostenibilidad y tecnología */
+body {
+    background: linear-gradient(135deg, #004d26, #66cc66);
+    color: #333;
+}
+
+/* Contenedor principal centrado */
+.index-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 20px;
+}
+
+/* Contenedor principal del contenido */
+.index-content {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+    animation: fadeIn 1.5s ease-in;
+}
+
+/* Animación de aparición */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Título principal */
+.index-content h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #004d26;
+}
+
+/* Subtítulos */
+.index-content h2 {
+    color: #004d26;
+    margin-bottom: 15px;
+}
+
+/* Párrafos */
+.index-content p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+/* Botones */
+.index-button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #004d26;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    margin: 5px;
+    font-weight: 500;
+}
+
+.index-button:hover {
+    background-color: #003822;
+}
+
+/* Enlaces */
+.index-content a {
+    color: #004d26;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.index-content a:hover {
+    text-decoration: underline;
+}
+
+/* Cards/Boxes */
+.index-card {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 4px;
+    margin: 15px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .index-content {
+        padding: 20px;
+    }
+    
+    .index-button {
+        display: block;
+        width: 100%;
+        color: white;
+        text-align: center;
+    }
+    
+    .index-form input,
+    .index-form button {
+        width: 100%;
+    }
+}

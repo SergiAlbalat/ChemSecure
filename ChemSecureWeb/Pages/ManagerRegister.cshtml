@@ -1,0 +1,73 @@
+@page
+@model ChemSecureWeb.Pages.ManagerRegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/register.css" />
+}
+
+<div class="register-container">
+    <div class="card register-card">
+        <div class="card-header text-center w-100">
+            <h2 class="text-center"><i class="bi bi-person-plus-fill me-2"></i>@ViewData["Title"]</h2>
+        </div>
+        <div class="card-body">
+
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+            {
+                <div class="alert alert-danger mb-3">
+                    <div class="d-flex align-items-center mb-1">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Error en el registre, revisa les dades:</strong>
+                    </div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                </div>
+            }
+
+            <form method="post">
+
+                <div class="form-floating mb-3">
+                    <input asp-for="RegisterData.Name" class="form-control" placeholder="Name" required />
+                    <label asp-for="RegisterData.Name">Nom</label>
+                    <span asp-validation-for="RegisterData.Name" class="text-danger small"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="RegisterData.Email" type="email" class="form-control" placeholder="Email" required />
+                    <label asp-for="RegisterData.Email">Correu Electrònic</label>
+                    <span asp-validation-for="RegisterData.Email" class="text-danger small"></span>
+                </div>
+                <div class="form-floating mb-4">
+                    <input asp-for="RegisterData.Address" type="adress" class="form-control" placeholder="Address" required />
+                    <label asp-for="RegisterData.Address">Address</label>
+                    <span asp-validation-for="RegisterData.Address" class="text-danger small"></span>
+                </div>
+                <div class="form-floating mb-4">
+                    <input asp-for="RegisterData.Phone" type="phone" class="form-control" placeholder="Phone" required />
+                    <label asp-for="RegisterData.Phone">Phone</label>
+                    <span asp-validation-for="RegisterData.Phone" class="text-danger small"></span>
+                </div>
+                <div class="form-floating mb-4">
+                    <input asp-for="RegisterData.Password" type="password" class="form-control" placeholder="Password" required />
+                    <label asp-for="RegisterData.Password">Contrasenya</label>
+                    <span asp-validation-for="RegisterData.Password" class="text-danger small"></span>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-register"> Registrar-se</button>
+                </div>
+            </form>
+
+            <div class="text-center login-link">
+                Ja tens un compte? <a asp-page="/Login">Inicia sessió aquí</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

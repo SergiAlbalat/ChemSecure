@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ChemSecureApi.Model
@@ -14,5 +14,7 @@ namespace ChemSecureApi.Model
         public DateTime CreationDate { get; set; }
         public int TankId { get; set; }
         public residusType Type { get; set; }
+        public bool IsManaged { get; set; } = false;
+        public DateTime? ManagedDate { get; set; } = null;
     }
 }

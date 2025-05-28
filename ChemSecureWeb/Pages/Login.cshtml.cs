@@ -43,10 +43,15 @@ namespace ChemSecureWeb.Pages
                         var tokenHandler = new JwtSecurityTokenHandler();
                         var jwtToken = tokenHandler.ReadJwtToken(token); // Decodificar JWT
                         var usernameClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+                        var roleClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
 
                         if (!string.IsNullOrEmpty(usernameClaim))
                         {
                             HttpContext.Session.SetString("UserName", usernameClaim);
+                        }
+                        if (!string.IsNullOrEmpty(roleClaim))
+                        {
+                            HttpContext.Session.SetString("UserRole", roleClaim);
                         }
                         _logger.LogInformation("Login succesful");
                         Response.Cookies.Append("jwtToken", token, new CookieOptions { HttpOnly = false });
@@ -68,7 +73,7 @@ namespace ChemSecureWeb.Pages
                 ErrorMessage = "Unexpected error. Try again.";
             }
 
-            return Page();
+            return RedirectToPage("/Index");
         }
     }
 }
