@@ -35,43 +35,43 @@ namespace ChemSecureWeb.Pages
             var httpClient = _httpClientFactory.CreateClient();
             httpClient.BaseAddress = new Uri(apiBaseUrl);
 
-            //  **Recuperar el token de autenticación**
+            // **Retrieve authentication token**
             var token = HttpContext.Session.GetString("AuthToken");
             if (!string.IsNullOrEmpty(token))
             {
-                _logger.LogInformation($"Token enviado: {token}");
+                _logger.LogInformation($"Token sent: {token}");
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
             else
             {
-                _logger.LogWarning("No se encontró un token de autenticación.");
-                ModelState.AddModelError(string.Empty, "No tienes permisos para registrar usuarios.");
+                _logger.LogWarning("No authentication token found.");
+                ModelState.AddModelError(string.Empty, "You do not have permission to register users.");
                 return Page();
             }
 
-            //  **Convertir el objeto a JSON**
+            // **Convert the object to JSON**
             var jsonContent = JsonConvert.SerializeObject(RegisterData);
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-            //  **Realizar la solicitud HTTP**
+            // **Make the HTTP request**
             var response = await httpClient.PostAsync("api/Auth/register", content);
 
-            //  **Manejo de respuestas**
+            // **Handle responses**
             if (response.IsSuccessStatusCode)
             {
-                _logger.LogInformation("Usuario registrado con éxito.");
+                _logger.LogInformation("User successfully registered.");
                 return RedirectToPage("/Login");
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
-                _logger.LogWarning("La API rechazó la solicitud por falta de permisos.");
-                ModelState.AddModelError(string.Empty, "No tienes permisos para realizar esta acción.");
+                _logger.LogWarning("The API rejected the request due to lack of permissions.");
+                ModelState.AddModelError(string.Empty, "You do not have permission to perform this action.");
             }
             else
             {
                 var responseContent = await response.Content.ReadAsStringAsync();
-                _logger.LogError($"Error en el registro: {response.StatusCode} - {responseContent}");
-                ModelState.AddModelError(string.Empty, $"Error al registrar usuario: {responseContent}");
+                _logger.LogError($"Registration error: {response.StatusCode} - {responseContent}");
+                ModelState.AddModelError(string.Empty, $"Error registering user: {responseContent}");
             }
 
             return Page();
