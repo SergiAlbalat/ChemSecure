@@ -1,0 +1,88 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy ASP.Net Core app with API to Azure Web App - chemsecure
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    # Definimos una variable para guardar los artefactos del build.
+    env:
+      ARTIFACT_DIR: ${{ github.workspace }}/myapp
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.x'
+
+      - name: Build solution
+        run: dotnet build --configuration Release
+
+      # Publicar la aplicación web
+      - name: Publish Web App project
+        run: dotnet publish ChemSecureWeb/ChemSecureWeb.csproj -c Release -o ${{ env.ARTIFACT_DIR }}/webapp
+
+      # Publicar la API
+      - name: Publish API project
+        run: dotnet publish ChemSecureApi/ChemSecureApi.csproj -c Release -o ${{ env.ARTIFACT_DIR }}/api
+
+      # Preparar la carpeta final combinando ambos artefactos
+      - name: Prepare final deploy package
+        run: |
+          # Crear carpeta deploy
+          New-Item -ItemType Directory -Force -Path "$env:ARTIFACT_DIR\deploy"
+          # Copiar archivos de la webapp a la raíz del paquete final
+          Copy-Item -Path "$env:ARTIFACT_DIR\webapp\*" -Destination "$env:ARTIFACT_DIR\deploy" -Recurse
+          # Crear subcarpeta "api" y copiar los archivos de la API allí
+          New-Item -ItemType Directory -Force -Path "$env:ARTIFACT_DIR\deploy\api"
+          Copy-Item -Path "$env:ARTIFACT_DIR\api\*" -Destination "$env:ARTIFACT_DIR\deploy\api" -Recurse
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: .net-app
+          path: ${{ env.ARTIFACT_DIR }}/deploy
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net-app
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_B832547A8B4A4CDCBD2F8C7CE5C93770 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_3DAD35604E5C41BF872C306962E1CFE6 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_FEE8BCC9A7E5447CA96315C430F70D82 }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'chemsecure'
+          slot-name: 'Production'
+          package: .
+          
