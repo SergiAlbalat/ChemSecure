@@ -47,7 +47,7 @@ namespace ChemSecureApi.Controllers
         /// <param name="id">The unique identifier of the tank to retrieve</param>
         /// <returns>The wanted tank or a NotFound response if the tank don't exists</returns>
         [Authorize]
-        [HttpGet("{id}")]
+        [HttpGet("{id}")]    
         public async Task<ActionResult<Tank>> GetTank(int id)
         {
             var tank = await _context.Tanks
