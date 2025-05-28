@@ -29,7 +29,7 @@ namespace ChemSecureWeb.Pages
             try
             {
                 var client = _httpClient.CreateClient("ChemSecureApi");
-                var response = await client.PostAsJsonAsync("api/Auth/login", Login);
+                var response = await client.PostAsJsonAsync("api/api/Auth/login", Login);
 
                 if (response.IsSuccessStatusCode)
                 {
