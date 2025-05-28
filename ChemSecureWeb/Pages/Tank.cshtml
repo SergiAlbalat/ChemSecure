@@ -1,18 +1,120 @@
-﻿@page
+@page
 @using ChemSecureWeb.Tools
 @model ChemSecureWeb.Pages.TankModel
-@{ViewData["Title"] = "Tank view";}
-<div style="display: flex; flex-wrap: wrap; gap: 1px;">
-	@{
-		foreach (var tank in Model.tanks)
-		{
-			string imageURL = TankTools.TankImage(tank.Percentage);
+@{
+    ViewData["Title"] = "My Tanks";
+}
 
-			<div style="flex: 0 1 calc(33.33% - 10px);">
-				<img src=@imageURL alt="" style="width:475px; height:auto; display:block; margin-bottom:10px;" loading="lazy" />
-				<a asp-page="./TankDetails" asp-route-itemid="@tank.Id" class="btn btn-primary">Details</a>
-			</div>
-		}
-	}
-	
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-4">@ViewData["Title"]</h1>
+                    <p class="lead">Welcome, <strong>@Model.UserName</strong>. Here you can see the status of your tanks.</p>
+                </div>
+                <a href="/AddTank" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Add New Tank
+                </a>
+            </div>
+
+            <hr class="my-4">
+
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> @Model.ErrorMessage
+                </div>
+            }
+            
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        @if (Model.tanks.Count == 0 && string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="col-12">
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle-fill me-2"></i> No tanks found associated with your account. Contact the administrator if you believe this is an error.
+                </div>
+            </div>
+        }
+
+        @foreach (var tank in Model.tanks)
+        {
+            string imageURL = TankTools.TankImage(tank.Percentage);
+            string size = TankTools.TankSize(tank.Capacity);
+            string alertClass = tank.Percentage >= 65 ? "alert-warning" : (tank.Percentage >= 90 ? "alert-danger" : "");
+
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 @alertClass">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Tank #@tank.Id</h5>
+                        <span class="badge bg-primary">@tank.Type</span>
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="@imageURL" alt="Tank at @tank.Percentage%" class="img-fluid mb-3" style="max-height: @size;" />
+                        
+                        <div class="progress mb-3" style="height: 25px;">
+                            @{
+                                string progressClass = "bg-success";
+                                if (tank.Percentage >= 65 && tank.Percentage < 90)
+                                {
+                                    progressClass = "bg-warning";
+                                }
+                                else if (tank.Percentage >= 90)
+                                {
+                                    progressClass = "bg-danger";
+                                }
+                            }
+                            <div class="progress-bar @progressClass" role="progressbar" style="width: @tank.Percentage%" 
+                                 aria-valuenow="@tank.Percentage" aria-valuemin="0" aria-valuemax="100">
+                                @tank.Percentage.ToString("0.0")%
+                            </div>
+                        </div>
+                        
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Capacity:</span>
+                                <strong>@tank.Capacity L</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Current Volume:</span>
+                                <strong>@tank.CurrentVolume L</strong>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="text-muted mb-0">Last updated: @DateTime.Now.ToString("yyyy-MM-dd")</p>
+                            @if (tank.Percentage >= 65)
+                            {
+                                <form method="post" asp-page-handler="AddWarning">
+                                    <input type="hidden" name="tankId" value="@tank.Id" />
+                                    <button type="submit" class="btn btn-warning btn-sm">
+                                        <i class="bi bi-exclamation-triangle"></i> Send Warning
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        </div>
 </div>

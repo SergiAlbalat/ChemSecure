@@ -1,0 +1,114 @@
+/* Reset global */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Fondo degradado que evoca sostenibilidad y tecnología */
+body {
+    background: linear-gradient(135deg, #004d26, #66cc66);
+    color: #333;
+}
+
+/* Contenedor principal centrado */
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+/* Centrar el título en la tarjeta */
+.card-header {
+    text-align: center;
+}
+
+/* Caja del formulario de registro */
+.register-form, .register-card {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    animation: fadeIn 1.5s ease-in;
+}
+
+/* Animación de aparición para darle un toque digital */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Título del formulario */
+.register-form h2, .card-header h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #004d26;
+    width: 100%;
+}
+
+/* Estilos para los campos de entrada */
+.register-form input[type="text"],
+.register-form input[type="password"],
+.register-form input[type="email"],
+.register-form input[type="tel"] {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+}
+
+.register-form input:focus {
+    border-color: #66cc66;
+}
+
+/* Botón de envío */
+.register-form button, .btn-register {
+    width: 100%;
+    padding: 12px;
+    background-color: #66cc66;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 16px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .register-form button:hover, .btn-register:hover {
+        background-color: #4caf50;
+    }
+
+/* Estilo para enlaces, por ejemplo para volver al login */
+.register-form a {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #004d26;
+    text-decoration: none;
+}
+
+    .register-form a:hover {
+        text-decoration: underline;
+    }
+
+/* Diseño responsivo para dispositivos móviles */
+@media (max-width: 480px) {
+    .register-form, .register-card {
+        margin: 20px;
+        padding: 20px;
+    }
+}

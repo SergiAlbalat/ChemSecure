@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var loggedIn = Tools.TokenHelper.IsTokenSession(Context.Session.GetString("AuthToken"));
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -8,6 +11,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ChemSecureWeb.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
     <header>
@@ -21,14 +25,26 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Login">Login</a>
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Register">Register</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Tank">Tank</a>
-                        </li>
+                        @if (Context.Session.GetString("AuthToken") == null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Login">Login</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Tank">Tanks</a>
+                            </li>
+                            <li class="nav-item ml-auto">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Logout">Logout</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/WarningList">WarningList</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

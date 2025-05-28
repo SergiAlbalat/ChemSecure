@@ -33,5 +33,17 @@ namespace ChemSecureWeb.Tools
                     return "./img/EmptyTank.png";
             }
         }
+        public static string TankSize(double maxSize)
+        {
+            switch (maxSize)
+            {
+                case < 5000:
+                    return "100px";
+                case > 12000:
+                    return "400px";
+                default :
+                    return "200px";
+            }
+        }
     }
 }

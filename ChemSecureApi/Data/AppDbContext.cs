@@ -9,6 +9,7 @@ namespace ChemSecureApi.Data
         public DbSet<Tank> Tanks { get; set; }
         public DbSet<Truck> Trucks { get; set; }
         public DbSet<Trip> Trips { get; set; }
+        public DbSet<Warning> Warnings { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
